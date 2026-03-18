@@ -1,0 +1,19 @@
+1. For the Customer
+GET /api/food-items → Fetches the list of available food for the menu.
+
+POST /api/wallet/topup → Adds money to the wallet_balance.
+
+POST /api/orders → Sends the cart data to the database and returns the order_id.
+
+2. For the Scanner Interface
+PATCH /api/orders/{order_id}/place → Updates the status from "Pending" to "Placed" once the QR is scanned.
+
+3. For the Cook
+GET /api/orders/pending → Retrieves all orders that have been scanned but not served.
+
+PATCH /api/orders/{order_id}/serve → Updates the status to "Served" and removes it from the cook's active list.
+
+4. For the Admin
+POST /api/inventory/add → Adds a new food item to the system.
+
+GET /api/sales/report → Calculates the total revenue from the Orders table.
