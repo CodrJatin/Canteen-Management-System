@@ -17,3 +17,8 @@ PATCH /api/orders/{order_id}/serve → Updates the status to "Served" and remove
 POST /api/inventory/add → Adds a new food item to the system.
 
 GET /api/sales/report → Calculates the total revenue from the Orders table.
+
+### TODO
+
+
+add a profile icon next to the balance in Customer menu page (maybe)
