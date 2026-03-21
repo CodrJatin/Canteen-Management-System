@@ -69,7 +69,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* --- MAIN CONTENT AREA --- */}
-                <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 min-h-[500px] p-8">
+                <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 min-h-125 p-8">
                     {activeTab === 'stock' ? (
                         <StockView
                             inventory={inventory}
