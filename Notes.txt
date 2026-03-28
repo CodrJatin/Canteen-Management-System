@@ -3,15 +3,15 @@ GET /api/food-items → Fetches the list of available food for the menu.
 
 POST /api/wallet/topup → Adds money to the wallet_balance.
 
-POST /api/orders → Sends the cart data to the database and returns the order_id.
+POST /api/orders → Sends the cart data to the database and returns the order_"id".
 
 2. For the Scanner Interface
-PATCH /api/orders/{order_id}/place → Updates the status from "Pending" to "Placed" once the QR is scanned.
+PATCH /api/orders/{order_"id"}/place → Updates the status from "Pending" to "Placed" once the QR is scanned.
 
 3. For the Cook
 GET /api/orders/pending → Retrieves all orders that have been scanned but not served.
 
-PATCH /api/orders/{order_id}/serve → Updates the status to "Served" and removes it from the cook's active list.
+PATCH /api/orders/{order_"id"}/serve → Updates the status to "Served" and removes it from the cook"s active list.
 
 4. For the Admin
 POST /api/inventory/add → Adds a new food item to the system.
@@ -21,4 +21,18 @@ GET /api/sales/report → Calculates the total revenue from the Orders table.
 ### TODO
 
 
-add a profile icon next to the balance in Customer menu page (maybe)
+            { "id": 1, "name": "Masala Dosa", "price": 60, "category": "Breakfast", "rating": 4.8, "image": "🥞" },
+            { "id": 2, "name": "Thali Special", "price": 120, "category": "Lunch", "rating": 4.9, "image": "🍱" },
+            { "id": 3, "name": "Samosa (2pc)", "price": 30, "category": "Snacks", "rating": 4.5, "image": "🥟" },
+            { "id": 4, "name": "Ginger Chai", "price": 15, "category": "Beverages", "rating": 4.7, "image": "☕" },
+            { "id": 5, "name": ""id"li Vada Combo", "price": 50, "category": "Breakfast", "rating": 4.6, "image": "⚪" },
+            { "id": 6, "name": "Paneer Butter Masala", "price": 140, "category": "Lunch", "rating": 4.9, "image": "🥘" },
+            { "id": 7, "name": "Vada Pav (2pc)", "price": 40, "category": "Snacks", "rating": 4.7, "image": "🍔" },
+            { "id": 8, "name": "Cold Coffee", "price": 45, "category": "Beverages", "rating": 4.4, "image": "🧋" },
+            { "id": 9, "name": "Veg Sandwich", "price": 55, "category": "Snacks", "rating": 4.3, "image": "🥪" },
+            { "id": 10, "name": "Butter Chicken Thali", "price": 160, "category": "Lunch", "rating": 5.0, "image": "🍗" },
+            { "id": 11, "name": "Poha Special", "price": 35, "category": "Breakfast", "rating": 4.5, "image": "🥣" },
+            { "id": 12, "name": "Mango Lassi", "price": 40, "category": "Beverages", "rating": 4.8, "image": "🥛" },
+            { "id": 13, "name": "Cheese Pizza Slice", "price": 70, "category": "Snacks", "rating": 4.2, "image": "🍕" },
+            { "id": 14, "name": "Lemon Iced Tea", "price": 25, "category": "Beverages", "rating": 4.6, "image": "🍹" }
+            
