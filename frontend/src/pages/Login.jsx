@@ -1,97 +1,144 @@
+import React, { useState } from 'react';
 import { useAuth } from '../context/authContext';
 import { useNavigate } from 'react-router';
-import React, { useState } from 'react';
-import { Lock, User, ShieldCheck, Utensils, ScanQrCode } from 'lucide-react';
+import {
+    Lock, User, ShieldCheck, Utensils,
+    ScanQrCode, ChevronRight, UserPlus, LogIn
+} from 'lucide-react';
+// We'll update TabButton internally to match the new theme.
+import TabButton from '../components/admin/TabButton';
 
-const Login = () => {
+export default function Login() {
     const { login } = useAuth();
     const navigate = useNavigate();
+
+    const [mode, setMode] = useState('login');
     const [role, setRole] = useState('customer');
-    const [formData, setFormData] = useState({ username: '', password: '' });
+    const [formData, setFormData] = useState({ username: '', password: '', confirmPassword: '' });
 
     const roles = [
-        { id: 'customer', label: 'Customer', icon: <User size={18} /> },
-        { id: 'cook', label: 'Cook', icon: <Utensils size={18} /> },
-        { id: 'scanner', label: 'Scanner', icon: <ScanQrCode size={18} /> },
-        { id: 'admin', label: 'Admin', icon: <ShieldCheck size={18} /> },
+        { id: 'customer', label: 'User', icon: <User size={16} /> },
+        { id: 'cook', label: 'Chef', icon: <Utensils size={16} /> },
+        { id: 'scanner', label: 'Scan', icon: <ScanQrCode size={16} /> },
+        { id: 'admin', label: 'Admin', icon: <ShieldCheck size={16} /> },
     ];
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        // MOCK LOGIN: Later, this will be an Axios call to your backend
-        const mockUser = {
-            username: formData.username,
-            role: role, // 'admin', 'customer', etc.
-            token: 'mock-jwt-token'
-        };
-
-        login(mockUser); // Save to context + localStorage
-        navigate(`/${role}`); // Send them to their dashboard
+        // Backend integration point
+        const mockUser = { username: formData.username, role, token: 'jwt-123' };
+        login(mockUser);
+        navigate(`/${role}`);
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-            <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Canteen Hub</h1>
-                    <p className="text-gray-500 mt-2">Select your role and sign in</p>
+        <div className="min-h-screen w-full bg-[#0f172a] flex items-center justify-center p-6 selection:bg-orange-500/30 font-sans relative overflow-hidden">
+            {/* --- ORANGE DECORATIVE BLOBS --- */}
+            <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-orange-600/15 rounded-full blur-[130px] pointer-events-none" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-600/10 rounded-full blur-[160px] pointer-events-none" />
+
+            <div className="w-full max-w-115 relative z-10 animate-in fade-in zoom-in-95 duration-500">
+                {/* --- FLOATING ORANGE ROLE BAR --- */}
+                <div className="flex justify-center mb-10">
+                    <div className="inline-flex p-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-3xl">
+                        {roles.map((r) => (
+                            <button
+                                key={r.id}
+                                onClick={() => setRole(r.id)}
+                                className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl text-xs font-black transition-all duration-300 ${role === r.id
+                                        ? 'bg-orange-600 text-white shadow-xl shadow-orange-600/30 scale-105' // Active Orange
+                                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    }`}
+                            >
+                                {r.icon}
+                                <span className="hidden sm:inline uppercase tracking-tighter">{r.label}</span>
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                {/* Role Selector */}
-                <div className="grid grid-cols-2 gap-2 mb-8">
-                    {roles.map((r) => (
-                        <button
-                            key={r.id}
-                            onClick={() => setRole(r.id)}
-                            className={`flex items-center justify-center gap-2 p-3 rounded-lg border transition-all ${role === r.id
-                                    ? 'bg-blue-600 text-white border-blue-600 shadow-md'
-                                    : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
-                                }`}
-                        >
-                            {r.icon}
-                            <span className="text-sm font-medium">{r.label}</span>
-                        </button>
-                    ))}
-                </div>
+                {/* --- MAIN CONTENT CARD (GLASSMORHISM) --- */}
+                <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[45px] p-10 md:p-14 shadow-[0_32px_64px_-15px_rgba(0,0,0,0.6)]">
+                    <header className="mb-12 text-center">
+                        {/* Orange Period Accent */}
+                        <h1 className="text-5xl font-black text-white tracking-tighter italic">
+                            CANTEEN<span className="text-orange-500 text-6xl">.</span>
+                        </h1>
+                        <div className="mt-7 flex justify-center">
+                            <div className="bg-black/25 p-1.5 rounded-2xl inline-flex gap-1.5">
+                                <TabButton
+                                    active={mode === 'login'}
+                                    onClick={() => setMode('login')}
+                                    icon={<LogIn size={16} />}
+                                    label="Log In"
+                                />
+                                <TabButton
+                                    active={mode === 'register'}
+                                    onClick={() => setMode('register')}
+                                    icon={<UserPlus size={16} />}
+                                    label="Register"
+                                />
+                            </div>
+                        </div>
+                    </header>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                        <div className="relative">
-                            <User className="absolute left-3 top-3 text-gray-400" size={20} />
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        <div className="group relative">
                             <input
                                 type="text"
-                                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                                placeholder="Enter username"
+                                required
+                                placeholder="Username"
+                                className="w-full bg-white/5 border border-white/5 rounded-2xl px-7 py-4.5 text-white font-bold placeholder:text-gray-500 focus:bg-white/10 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none"
                                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                             />
                         </div>
-                    </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                        <div className="relative">
-                            <Lock className="absolute left-3 top-3 text-gray-400" size={20} />
+                        <div className="group relative">
                             <input
                                 type="password"
-                                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                                placeholder="••••••••"
+                                required
+                                placeholder="Password"
+                                className="w-full bg-white/5 border border-white/5 rounded-2xl px-7 py-4.5 text-white font-bold placeholder:text-gray-500 focus:bg-white/10 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none"
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             />
                         </div>
-                    </div>
 
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-blue-200 transition-all transform active:scale-[0.98]"
-                    >
-                        Login as {role.charAt(0).toUpperCase() + role.slice(1)}
-                    </button>
-                </form>
+                        {mode === 'register' && (
+                            <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+                                <input
+                                    type="password"
+                                    required
+                                    placeholder="Confirm Password"
+                                    className="w-full bg-white/5 border border-white/5 rounded-2xl px-7 py-4.5 text-white font-bold placeholder:text-gray-500 focus:bg-white/10 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none"
+                                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                />
+                            </div>
+                        )}
+
+                        {/* --- ORANGE ACTION BUTTON --- */}
+                        <button
+                            type="submit"
+                            className="w-full bg-orange-600 hover:bg-orange-500 text-white font-black py-5 rounded-3xl shadow-3xl shadow-orange-600/25 transition-all transform active:scale-[0.96] flex items-center justify-center gap-3 mt-10 group"
+                        >
+                            {mode === 'login' ? 'AUTHENTICATE' : 'CREATE ACCOUNT'}
+                            <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                        </button>
+                    </form>
+
+                    {mode === 'login' && (
+                        <p className="mt-9 text-center text-gray-500 text-xs font-bold uppercase tracking-widest cursor-pointer hover:text-orange-400 transition-colors">
+                            Forgot Password?
+                        </p>
+                    )}
+                </div>
+
+                {/* Footer Brand */}
+                <div className="mt-10 text-center">
+                    <p className="text-gray-700 font-bold text-[10px] tracking-[0.35em] uppercase">
+                        Canteen Management System v2.0
+                    </p>
+                </div>
             </div>
         </div>
     );
-};
-
-export default Login;
+}

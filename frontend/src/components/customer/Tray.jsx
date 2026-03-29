@@ -1,118 +1,76 @@
-import { ShoppingBag, Plus, Minus, ChevronRight, X, Trash2 } from 'lucide-react';
+import { ShoppingBag, Plus, Minus, ChevronRight, X } from 'lucide-react';
 
-export default function UnifiedTray({
-    cartEntries,
-    menu,
-    updateCart,
-    cartTotal,
-    cartCount,
-    isMobile = false,
-    onClose,
-    onCheckout
-}) {
+export default function UnifiedTray({ cartEntries, menu, updateCart, cartTotal, cartCount, isMobile = false, onClose, onCheckout }) {
 
     const renderItems = () => (
-        <div className={`grow overflow-y-auto pr-2 custom-scrollbar ${isMobile ? 'space-y-3 px-1' : 'space-y-2'}`}>
+        <div className={`grow overflow-y-auto pr-2 custom-scrollbar ${isMobile ? 'space-y-4' : 'space-y-3'}`}>
             {cartEntries.length > 0 ? (
                 cartEntries.map(([id, qty]) => {
                     const item = menu.find(m => m.id === parseInt(id));
                     if (!item) return null;
 
                     return (
-                        <div
-                            key={id}
-                            className={`flex justify-between items-center bg-gray-50/50 rounded-xl border border-transparent hover:border-gray-200 transition-all ${isMobile ? 'p-4' : 'p-3'}`}
-                        >
+                        <div key={id} className={`flex justify-between items-center bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all ${isMobile ? 'p-5' : 'p-4'}`}>
                             <div className="min-w-0 pr-2">
-                                <p className="font-bold text-gray-900 text-xs uppercase truncate leading-tight">
-                                    {item.name}
-                                </p>
-                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-0.5">
-                                    {qty} x ₹{item.price}
-                                </p>
+                                <p className="font-black text-white text-xs uppercase truncate tracking-tight">{item.name}</p>
+                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mt-1">₹{item.price} Each</p>
                             </div>
 
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={() => updateCart(parseInt(id), -1)}
-                                    className="p-1.5 hover:text-red-500 transition-colors"
-                                >
-                                    <Minus size={isMobile ? 16 : 12} strokeWidth={3} />
+                            <div className="flex items-center gap-3 bg-black/20 p-1.5 rounded-xl border border-white/5">
+                                <button onClick={() => updateCart(parseInt(id), -1)} className="p-1 text-gray-400 hover:text-orange-500 transition-colors">
+                                    <Minus size={14} strokeWidth={3} />
                                 </button>
-
-                                <span className="font-black text-xs min-w-7.5 text-center text-gray-700">
-                                    {isMobile ? qty : `₹${qty * item.price}`}
-                                </span>
-
-                                <button
-                                    onClick={() => updateCart(parseInt(id), 1)}
-                                    className="p-1.5 hover:text-blue-600 transition-colors"
-                                >
-                                    <Plus size={isMobile ? 16 : 12} strokeWidth={3} />
+                                <span className="font-black text-xs min-w-5 text-center text-orange-500">{qty}</span>
+                                <button onClick={() => updateCart(parseInt(id), 1)} className="p-1 text-gray-400 hover:text-orange-500 transition-colors">
+                                    <Plus size={14} strokeWidth={3} />
                                 </button>
                             </div>
                         </div>
                     );
                 })
             ) : (
-                <div className="py-16 text-center space-y-3 opacity-20 grayscale">
-                    <ShoppingBag size={40} className="mx-auto" />
-                    <p className="font-black uppercase text-[10px] tracking-[0.2em]">Tray is empty</p>
+                <div className="py-20 text-center space-y-4 opacity-30">
+                    <ShoppingBag size={48} className="mx-auto text-gray-500" />
+                    <p className="font-black uppercase text-[10px] tracking-[0.3em] text-gray-400">Your tray is empty</p>
                 </div>
             )}
         </div>
     );
+
     return (
-        <div className="flex flex-col h-full text-left">
-            {/* --- HEADER --- */}
-            <div className="flex items-center justify-between mb-5 px-1 shrink-0">
-                <div className="flex items-center gap-2">
-                    <ShoppingBag className="text-blue-600" size={20} strokeWidth={2.5} />
-                    <h2 className="text-lg font-black uppercase tracking-tighter italic text-gray-900">
-                        {isMobile ? "Review Tray" : "Your Tray"}
+        <div className="flex flex-col h-full text-left font-sans">
+            <div className="flex items-center justify-between mb-8 shrink-0">
+                <div className="flex items-center gap-3">
+                    <div className="bg-orange-600/20 p-2 rounded-xl border border-orange-500/20">
+                        <ShoppingBag className="text-orange-500" size={20} strokeWidth={2.5} />
+                    </div>
+                    <h2 className="text-xl font-black uppercase tracking-tighter italic text-white">
+                        {isMobile ? "Order Review" : "The Tray"}
                     </h2>
                 </div>
-
-                {isMobile ? (
-                    <button
-                        onClick={onClose}
-                        className="p-2 bg-gray-100 rounded-full text-gray-400 hover:bg-gray-200 transition-colors"
-                    >
-                        <X size={20} strokeWidth={3} />
-                    </button>
-                ) : (
-                    <span className="bg-blue-50 text-blue-600 px-2.5 py-1 rounded-lg font-black text-[10px] uppercase tracking-widest">
-                        {cartCount} Items
-                    </span>
-                )}
+                <span className="bg-white/5 border border-white/10 text-gray-400 px-3 py-1 rounded-xl font-black text-[10px] uppercase tracking-widest">
+                    {cartCount} Items
+                </span>
             </div>
 
-            {/* --- SCROLLABLE LIST --- */}
             {renderItems()}
 
-            {/* --- FOOTER --- */}
-            <div className="mt-5 pt-5 border-t-2 border-dashed border-gray-50 px-1 shrink-0">
-                <div className="flex justify-between items-center mb-5">
+            <div className="mt-8 pt-8 border-t border-white/5 shrink-0">
+                <div className="flex justify-between items-end mb-6">
                     <div>
-                        <span className="text-gray-400 font-bold uppercase text-[9px] tracking-[0.2em] block">
-                            Grand Total
-                        </span>
-                        <span className="text-[10px] text-blue-500 font-black uppercase tracking-widest">
-                            Incl. all taxes
-                        </span>
+                        <span className="text-gray-500 font-black uppercase text-[10px] tracking-[0.2em] block mb-1">Total Bill</span>
+                        <span className="text-[10px] text-orange-500/60 font-black uppercase tracking-widest leading-none italic underline decoration-orange-500/20">Tax Included</span>
                     </div>
-                    <span className="text-3xl font-black text-gray-900 tracking-tighter leading-none">
-                        ₹{cartTotal}
-                    </span>
+                    <span className="text-4xl font-black text-white tracking-tighter leading-none italic">₹{cartTotal}</span>
                 </div>
 
                 <button
                     disabled={cartCount === 0}
                     onClick={onCheckout}
-                    className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-base uppercase tracking-tight shadow-lg shadow-blue-100 hover:bg-blue-700 disabled:bg-gray-100 disabled:text-gray-300 disabled:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
+                    className="w-full bg-orange-600 text-white py-5 rounded-[25px] font-black text-sm uppercase tracking-widest shadow-2xl shadow-orange-600/20 hover:bg-orange-500 disabled:opacity-20 disabled:grayscale transition-all flex items-center justify-center gap-3 group active:scale-95"
                 >
-                    {isMobile ? 'Confirm & Pay' : 'Confirm Order'}
-                    <ChevronRight size={18} strokeWidth={3} />
+                    {isMobile ? 'Initiate Payment' : 'Confirm Order'}
+                    <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
             </div>
         </div>

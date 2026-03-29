@@ -4,7 +4,6 @@ import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router";
 
 export default function UserMenu({ isOpen, onClose, userName, userRole, onNavigate }) {
-
     const { logout } = useAuth();
     const navigate = useNavigate();
 
@@ -12,52 +11,68 @@ export default function UserMenu({ isOpen, onClose, userName, userRole, onNaviga
 
     return (
         <>
-            {/* Backdrop to close when clicking outside */}
-            <div className="fixed inset-0 z-40" onClick={onClose} />
+            {/* Dark Dimmer Backdrop */}
+            <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px]" onClick={onClose} />
 
-            <div className="absolute right-0 mt-4 w-72 bg-white rounded-4xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-50 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+            {/* --- THE STACKED GLASS CONTAINER --- */}
+            <div className="absolute right-0 mt-6 w-80 
+                bg-[#1e293b]/80 backdrop-blur-2xl 
+                border border-white/10 
+                rounded-[40px] 
+                shadow-[0_40px_100px_-20px_rgba(0,0,0,0.7)] 
+                overflow-hidden z-50 
+                animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-300 
+                origin-top-right">
 
                 {/* --- USER IDENTITY SECTION --- */}
-                <div className="bg-blue-50/50 p-6 flex flex-col items-center text-center">
-                    <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-blue-600 shadow-sm mb-3 border-4 border-white">
-                        <CircleUserRound size={48} strokeWidth={1.5} />
+                <div className="p-8 flex flex-col items-center text-center relative">
+                    {/* Inner Accent Glow */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-[60px] -z-10" />
+
+                    <div className="w-20 h-20 bg-[#0f172a]/80 rounded-[28px] flex items-center justify-center text-orange-500 shadow-2xl mb-4 border border-white/5 group">
+                        <CircleUserRound size={48} strokeWidth={1.2} className="group-hover:scale-110 transition-transform duration-500" />
                     </div>
-                    <h3 className="text-xl font-black text-gray-900 tracking-tight leading-tight">
+
+                    <h3 className="text-xl font-black text-white tracking-tight leading-tight">
                         {userName}
                     </h3>
-                    {/* Role Badge */}
-                    <span className="mt-2 px-3 py-1 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-blue-100">
+
+                    <span className="mt-3 px-4 py-1.5 bg-orange-600/20 border border-orange-500/20 text-orange-500 text-[9px] font-black uppercase tracking-[0.2em] rounded-full">
                         {userRole}
                     </span>
                 </div>
 
                 {/* --- ACTIONS SECTION --- */}
-                <div className="p-3">
+                <div className="p-4 bg-black/20 border-t border-white/5 space-y-2">
                     <button
                         onClick={() => { onNavigate('orders'); onClose(); }}
-                        className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-all group"
+                        className="w-full flex items-center justify-between p-4 rounded-3xl hover:bg-white/5 transition-all group"
                     >
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2.5 bg-orange-600/10 text-orange-500 rounded-xl group-hover:bg-orange-600 group-hover:text-white transition-all duration-300">
                                 <ShoppingBag size={20} />
                             </div>
-                            <span className="font-bold text-gray-700">My Orders</span>
+                            <span className="font-bold text-gray-300 group-hover:text-white transition-colors text-sm">My Orders</span>
                         </div>
-                        <ChevronRight size={16} className="text-gray-300" />
+                        <ChevronRight size={16} className="text-gray-700 group-hover:text-orange-500 transition-all group-hover:translate-x-1" />
                     </button>
-
-                    <div className="h-px bg-gray-100 mx-4 my-2" />
 
                     <button
-                        className="w-full flex items-center p-4 rounded-2xl hover:bg-red-50 text-red-500 transition-all group"
+                        onClick={() => { logout(); navigate("/"); }}
+                        className="w-full flex items-center p-4 rounded-3xl hover:bg-red-500/10 text-red-500 transition-all group gap-4"
                     >
-                        <div className="flex items-center gap-3">
-                            
-                            <button onClick={() => { logout(); navigate("/"); }} className="flex items-center gap-2 text-red-500 font-bold hover:bg-red-50 px-3 md:px-5 py-2 rounded-2xl transition-all cursor-pointer">
-                                <LogOut size={18} /> <span>Logout</span>
-                            </button>
+                        <div className="p-2.5 bg-red-500/10 rounded-xl group-hover:bg-red-500 group-hover:text-white transition-all duration-300 text-red-500">
+                            <LogOut size={20} />
                         </div>
+                        <span className="font-bold text-sm">Logout Session</span>
                     </button>
+                </div>
+
+                {/* Secure Brand Footer */}
+                <div className="bg-black/40 py-4 border-t border-white/5">
+                    <p className="text-[8px] font-black text-gray-700 uppercase tracking-[0.5em] text-center">
+                        Canteen.Hub v2.0
+                    </p>
                 </div>
             </div>
         </>

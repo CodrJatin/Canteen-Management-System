@@ -1,13 +1,13 @@
 export default function CategoryBar({ categories, active, onSelect }) {
     return (
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide select-none">
             {categories.map(cat => (
                 <button
                     key={cat}
                     onClick={() => onSelect(cat)}
-                    className={`px-6 py-2.5 rounded-xl font-bold whitespace-nowrap transition-all text-sm ${active === cat
-                            ? "bg-blue-600 text-white shadow-lg shadow-blue-100"
-                            : "bg-white text-gray-500 hover:bg-gray-100 border border-gray-100"
+                    className={`px-7 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] whitespace-nowrap transition-all duration-300 ${active === cat
+                            ? "bg-orange-600 text-white scale-105"
+                            : "bg-white/5 text-gray-500 hover:bg-white/10 hover:text-gray-300 border border-white/5"
                         }`}
                 >
                     {cat}

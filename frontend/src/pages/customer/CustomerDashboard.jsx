@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, CircleUserRound } from 'lucide-react';
+import { Search, CircleUserRound, ShoppingCart } from 'lucide-react';
 import CategoryBar from '../../components/customer/CategoryBar';
 import FoodCard from '../../components/customer/FoodCard';
 import Tray from '../../components/customer/Tray';
@@ -59,31 +59,31 @@ export default function CustomerDashboard() {
     );
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col font-sans overflow-x-hidden">
-            {/* --- HEADER --- */}
-            <header className="bg-white border-b border-gray-100 sticky top-0 z-40 px-4 md:px-8 py-5">
-                <div className="max-w-400 mx-auto flex justify-between items-center">
+        <div className="min-h-screen bg-[#0f172a] flex flex-col font-sans overflow-x-hidden relative text-white">
+            {/* --- THEME DECORATION --- */}
+            <div className="absolute top-0 right-0 w-125 h-125 bg-orange-600/10 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-100 h-100 bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
 
-                    {/* Brand */}
-                    <h1 onClick={() => setView('menu')} className="text-2xl font-black italic text-blue-600 tracking-tighter cursor-pointer">
-                        CANTEEN.
+            {/* --- HEADER --- */}
+            <header className="bg-white/5 backdrop-blur-xl border-b border-white/10 sticky top-0 z-40 px-4 md:px-8 py-5">
+                <div className="max-w-350 mx-auto flex justify-between items-center">
+                    <h1 onClick={() => setView('menu')} className="text-3xl font-black italic tracking-tighter cursor-pointer select-none text-white">
+                        CANTEEN<span className="text-orange-500">.</span>
                     </h1>
 
-                    {/* User Icon Button */}
                     <div className="relative">
                         <button
                             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                             className={`
-                                w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300
+                                w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 border
                                 ${isUserMenuOpen
-                                    ? 'bg-blue-600 text-white shadow-xl shadow-blue-200 rotate-12'
-                                    : 'bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-blue-600'}
+                                    ? 'bg-orange-600 border-orange-500 text-white shadow-xl shadow-orange-600/20 rotate-12'
+                                    : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:text-orange-500'}
                             `}
                         >
                             <CircleUserRound size={28} strokeWidth={isUserMenuOpen ? 2.5 : 2} />
                         </button>
 
-                        {/* Modular User Menu */}
                         <UserMenu
                             isOpen={isUserMenuOpen}
                             onClose={() => setIsUserMenuOpen(false)}
@@ -95,39 +95,54 @@ export default function CustomerDashboard() {
                 </div>
             </header>
 
-            <main className="max-w-400 mx-auto w-full p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 grow">
+            <main className="max-w-350 mx-auto w-full p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 grow relative z-10">
                 {/* MENU SECTION */}
-                <div className="lg:col-span-8 space-y-6">
-                    <CategoryBar categories={["All", "Breakfast", "Lunch", "Snacks", "Beverages"]} active={activeCategory} onSelect={setActiveCategory} />
-                    <div className="relative w-full ">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                        <input
-                            className="w-full bg-gray-100 rounded-2xl py-3.5 pl-11 pr-4 font-bold outline-none focus:ring-2 focus:ring-blue-500/20 transition-all text-sm"
-                            placeholder="Search food..."
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                <div className="lg:col-span-8 space-y-8">
+                    {/* Search and Categories */}
+                    <div className="space-y-6">
+                        <div className="relative w-full group">
+                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-orange-500 transition-colors" size={20} />
+                            <input
+                                className="w-full bg-white/5 border border-white/5 rounded-2xl py-4.5 pl-14 pr-6 font-bold outline-none focus:bg-white/10 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all text-sm placeholder:text-gray-600"
+                                placeholder="Craving something specific?"
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+                        <CategoryBar
+                            categories={["All", "Breakfast", "Lunch", "Snacks", "Beverages"]}
+                            active={activeCategory}
+                            onSelect={setActiveCategory}
                         />
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 pb-24 lg:pb-0">
+
+                    {/* Food Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 pb-24 lg:pb-0">
                         {filteredMenu.map(item => (
-                            <FoodCard key={item.id} item={item} quantity={cart[item.id] || 0} onUpdate={(delta) => updateCart(item.id, delta)} />
+                            <FoodCard
+                                key={item.id}
+                                item={item}
+                                quantity={cart[item.id] || 0}
+                                onUpdate={(delta) => updateCart(item.id, delta)}
+                            />
                         ))}
                     </div>
                 </div>
 
-                {/* ---TRAY CONTAINER --- */}
+                {/* --- TRAY CONTAINER --- */}
                 <aside className={`
-                    ${isMobileTrayOpen ? 'fixed inset-0 z-100 flex flex-col justify-end bg-black/60 backdrop-blur-sm' : 'hidden lg:block lg:col-span-4'}
+                    ${isMobileTrayOpen ? 'fixed inset-0 z-100 flex flex-col justify-end bg-black/80 backdrop-blur-md' : 'hidden lg:block lg:col-span-4'}
                 `}>
-                    {/* Background overlay for mobile only */}
                     {isMobileTrayOpen && <div className="absolute inset-0 -z-10" onClick={() => setIsMobileTrayOpen(false)} />}
 
                     <div className={`
-                        bg-white shadow-2xl border border-gray-100 flex flex-col
+                        bg-white/5 backdrop-blur-3xl border border-white/10 flex flex-col
                         ${isMobileTrayOpen
-                            ? 'rounded-t-[40px] p-6 max-h-[85vh] animate-in slide-in-from-bottom-full duration-300'
-                            : 'rounded-[35px] p-6 sticky top-28'}
+                            ? 'rounded-t-[45px] p-8 max-h-[90vh] animate-in slide-in-from-bottom-full duration-500'
+                            : 'rounded-[40px] p-8 sticky top-32 shadow-2xl'}
                     `}>
-                        {isMobileTrayOpen && <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 shrink-0" onClick={() => setIsMobileTrayOpen(false)} />}
+                        {isMobileTrayOpen && (
+                            <div className="w-16 h-1.5 bg-white/10 rounded-full mx-auto mb-8 shrink-0 cursor-pointer hover:bg-white/20" onClick={() => setIsMobileTrayOpen(false)} />
+                        )}
 
                         <Tray
                             isMobile={isMobileTrayOpen}
@@ -146,18 +161,26 @@ export default function CustomerDashboard() {
                 </aside>
             </main>
 
-            {/* MOBILE FLOATING BAR */}
+            {/* MOBILE FLOATING BAR - UPGRADED TO ORANGE */}
             {cartCount > 0 && !isMobileTrayOpen && (
-                <div className="fixed bottom-6 left-6 right-6 lg:hidden z-50 animate-in fade-in slide-in-from-bottom-5">
+                <div className="fixed bottom-8 left-6 right-6 lg:hidden z-50 animate-in fade-in slide-in-from-bottom-8 duration-500">
                     <button
                         onClick={() => setIsMobileTrayOpen(true)}
-                        className="w-full bg-blue-600 text-white p-5 rounded-[25px] flex justify-between items-center shadow-2xl active:scale-95 transition-all"
+                        className="w-full bg-orange-600 text-white p-6 rounded-[30px] flex justify-between items-center shadow-[0_20px_50px_rgba(234,88,12,0.3)] active:scale-95 transition-all border border-orange-500"
                     >
-                        <div className="flex items-center gap-3">
-                            <div className="bg-white/20 px-3 py-1 rounded-lg font-black text-sm">{cartCount}</div>
-                            <span className="font-black uppercase text-sm tracking-tight italic text-left">Review <br className="xs:hidden" /> Your Tray</span>
+                        <div className="flex items-center gap-4">
+                            <div className="bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-xl font-black text-sm">
+                                {cartCount}
+                            </div>
+                            <div className="flex flex-col text-left">
+                                <span className="font-black uppercase text-[10px] tracking-widest opacity-80 leading-none">Your Tray</span>
+                                <span className="font-black text-sm tracking-tight italic">Ready to Checkout?</span>
+                            </div>
                         </div>
-                        <span className="font-black text-xl tracking-tighter">₹{cartTotal}</span>
+                        <div className="flex items-center gap-2">
+                            <span className="font-black text-2xl tracking-tighter">₹{cartTotal}</span>
+                            <ShoppingCart size={20} />
+                        </div>
                     </button>
                 </div>
             )}

@@ -1,28 +1,96 @@
 import { useState } from "react";
+import { X, PackagePlus } from "lucide-react";
+
 export default function AddItemModal({ onClose, onAdd }) {
+    // Logic remains untouched: matching your MongoDB 'quantity' field
     const [form, setForm] = useState({ name: '', price: '', quantity: '' });
+
+    const handleSubmit = () => {
+        if (!form.name || !form.price || !form.quantity) {
+            alert("Please fill in all fields");
+            return;
+        }
+        onAdd(form);
+    };
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-            <div className="bg-white w-full max-w-md rounded-[30px] md:rounded-[35px] p-6 md:p-8 shadow-2xl text-left">
-                <h2 className="text-xl md:text-2xl font-black text-gray-900">New Item</h2>
-                <div className="mt-6 space-y-4">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-in fade-in duration-300">
+            <div className="bg-[#1e293b] w-full max-w-md rounded-[45px] p-8 md:p-12 shadow-[0_32px_64px_-15px_rgba(0,0,0,0.7)] border border-white/10 animate-in zoom-in-95 relative overflow-hidden text-left">
+
+                {/* Decorative Glow */}
+                <div className="absolute -top-20 -right-20 w-40 h-40 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
+
+                <button
+                    onClick={onClose}
+                    className="absolute right-8 top-8 p-2 text-gray-500 hover:text-white hover:bg-white/5 rounded-full transition-all"
+                >
+                    <X size={20} />
+                </button>
+
+                <header className="mb-10">
+                    <div className="bg-orange-600/10 w-14 h-14 rounded-2xl flex items-center justify-center text-orange-500 border border-orange-500/20 mb-6">
+                        <PackagePlus size={28} />
+                    </div>
+                    <h2 className="text-3xl font-black text-white tracking-tighter italic uppercase">
+                        New Entry<span className="text-orange-500">.</span>
+                    </h2>
+                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mt-2">
+                        Append to Database
+                    </p>
+                </header>
+
+                <div className="space-y-6">
+                    {/* --- NAME INPUT --- */}
                     <div>
-                        <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Name</label>
-                        <input className="w-full mt-1 px-5 py-3 bg-gray-50 border rounded-2xl font-bold outline-none" placeholder="e.g. Vada" onChange={e => setForm({ ...form, name: e.target.value })} />
+                        <label className="text-[10px] font-black uppercase text-gray-500 ml-1 tracking-widest">Item Designation</label>
+                        <input
+                            className="w-full mt-2 px-6 py-4 bg-white/5 border border-white/5 rounded-2xl font-bold text-white outline-none focus:bg-white/10 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/5 transition-all placeholder:text-gray-700"
+                            placeholder="e.g. Masala Dosa"
+                            value={form.name}
+                            onChange={e => setForm({ ...form, name: e.target.value })}
+                        />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+
+                    <div className="grid grid-cols-2 gap-6">
+                        {/* --- PRICE INPUT --- */}
                         <div>
-                            <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Price (₹)</label>
-                            <input type="number" className="w-full mt-1 px-5 py-3 bg-gray-50 border rounded-2xl font-bold outline-none" placeholder="0" onChange={e => setForm({ ...form, price: e.target.value })} />
+                            <label className="text-[10px] font-black uppercase text-gray-500 ml-1 tracking-widest">Price (₹)</label>
+                            <input
+                                type="number"
+                                className="w-full mt-2 px-6 py-4 bg-white/5 border border-white/5 rounded-2xl font-bold text-white outline-none focus:bg-white/10 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/5 transition-all placeholder:text-gray-700"
+                                placeholder="0"
+                                value={form.price}
+                                onChange={e => setForm({ ...form, price: e.target.value })}
+                            />
                         </div>
+
+                        {/* --- QUANTITY INPUT --- */}
                         <div>
-                            <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Initial Stock</label>
-                            <input type="number" className="w-full mt-1 px-5 py-3 bg-gray-50 border rounded-2xl font-bold outline-none" placeholder="0" onChange={e => setForm({ ...form, quantity: e.target.value })} />
+                            <label className="text-[10px] font-black uppercase text-gray-500 ml-1 tracking-widest">Initial Units</label>
+                            <input
+                                type="number"
+                                className="w-full mt-2 px-6 py-4 bg-white/5 border border-white/5 rounded-2xl font-bold text-white outline-none focus:bg-white/10 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/5 transition-all placeholder:text-gray-700"
+                                placeholder="0"
+                                value={form.quantity}
+                                onChange={e => setForm({ ...form, quantity: e.target.value })}
+                            />
                         </div>
                     </div>
-                    <div className="flex gap-3 pt-4">
-                        <button onClick={onClose} className="flex-1 py-4 font-bold text-gray-500 hover:bg-gray-100 rounded-2xl cursor-pointer">Cancel</button>
-                        <button onClick={() => onAdd(form)} className="flex-1 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-100 cursor-pointer">Add Item</button>
+
+                    {/* --- ACTION BUTTONS --- */}
+                    <div className="flex gap-4 pt-6">
+                        <button
+                            onClick={onClose}
+                            className="flex-1 py-4 font-black text-[10px] uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5 rounded-2xl transition-all"
+                        >
+                            Abort
+                        </button>
+                        <button
+                            onClick={handleSubmit}
+                            className="flex-2 py-4 bg-orange-600 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl hover:bg-orange-500 shadow-2xl shadow-orange-600/20 active:scale-95 transition-all"
+                        >
+                            Commit to Stock
+                        </button>
                     </div>
                 </div>
             </div>
