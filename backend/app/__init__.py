@@ -1,5 +1,5 @@
 import os
-from flask import Flask, make_response
+from flask import Flask, make_response, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 from .extensions import mongo
@@ -7,11 +7,16 @@ from .routes.orders import orders_bp
 from .routes.stock import stock_bp 
 from .routes.auth import auth_bp
 
+
 # Load the variables from .env into the system
 load_dotenv()
 
 def create_app():
     app = Flask(__name__)
+    
+    @app.route('/')
+    def home():
+        return {"status": "Canteen API is Live"}, 200
 
     # 1. Define origins
     production_url = os.getenv("FRONTEND_URL") 
@@ -36,10 +41,17 @@ def create_app():
     # 3. GLOBAL PREFLIGHT HANDLER (The Vercel Fix)
     @app.after_request
     def handle_options(response):
-        # If the browser is just asking for permission (OPTIONS)
-        # we make sure it gets a 200 OK immediately.
+        # Add CORS headers to EVERY response
+        response.headers.add('Access-Control-Allow-Origin', os.getenv("FRONTEND_URL"))
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
         response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        
+        # If the browser is just doing a preflight check (OPTIONS)
+        # we return a 200 OK immediately so it doesn't 404.
+        if request.method == 'OPTIONS':
+            return make_response('', 200)
+            
         return response
 
     # Database Configuration
