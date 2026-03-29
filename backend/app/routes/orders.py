@@ -3,7 +3,7 @@ from app.extensions import mongo # Using our established extensions pattern
 
 orders_bp = Blueprint('orders', __name__)
 
-@orders_bp.route('/api/orders', methods=['GET'])
+@orders_bp.route('/orders', methods=['GET'])
 def get_orders():
     try:
         # Fetch all orders, sorted by newest first
