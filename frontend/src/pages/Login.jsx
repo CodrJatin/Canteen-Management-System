@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 // We'll update TabButton internally to match the new theme.
 import TabButton from '../components/admin/TabButton';
+import { API_ENDPOINTS } from '../api/config';
 
 export default function Login() {
     const { login } = useAuth();
@@ -23,12 +24,40 @@ export default function Login() {
         { id: 'admin', label: 'Admin', icon: <ShieldCheck size={16} /> },
     ];
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Backend integration point
-        const mockUser = { username: formData.username, role, token: 'jwt-123' };
-        login(mockUser);
-        navigate(`/${role}`);
+
+        const url = mode === 'login' ? API_ENDPOINTS.LOGIN : API_ENDPOINTS.REGISTER;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: formData.username,
+                    password: formData.password,
+                    role: role
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                if (mode === 'login') {
+                    // If login was successful, save the REAL user data
+                    login(data.user);
+                    navigate(`/${data.user.role}`);
+                } else {
+                    // If registration was successful, switch to login mode
+                    alert("Account created! Please sign in.");
+                    setMode('login');
+                }
+            } else {
+                alert(data.error || "Something went wrong");
+            }
+        } catch (err) {
+            console.error("Auth Error:", err);
+        }
     };
 
     return (
@@ -40,7 +69,7 @@ export default function Login() {
             <div className="w-full max-w-115 relative z-10 animate-in fade-in zoom-in-95 duration-500">
                 {/* --- FLOATING ORANGE ROLE BAR --- */}
                 <div className="flex justify-center mb-10">
-                    <div className="inline-flex p-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-3xl">
+                    <div className="gap-2 inline-flex p-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-3xl">
                         {roles.map((r) => (
                             <button
                                 key={r.id}
@@ -125,19 +154,8 @@ export default function Login() {
                         </button>
                     </form>
 
-                    {mode === 'login' && (
-                        <p className="mt-9 text-center text-gray-500 text-xs font-bold uppercase tracking-widest cursor-pointer hover:text-orange-400 transition-colors">
-                            Forgot Password?
-                        </p>
-                    )}
                 </div>
 
-                {/* Footer Brand */}
-                <div className="mt-10 text-center">
-                    <p className="text-gray-700 font-bold text-[10px] tracking-[0.35em] uppercase">
-                        Canteen Management System v2.0
-                    </p>
-                </div>
             </div>
         </div>
     );

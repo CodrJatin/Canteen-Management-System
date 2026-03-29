@@ -5,6 +5,7 @@ import FoodCard from '../../components/customer/FoodCard';
 import Tray from '../../components/customer/Tray';
 import CheckoutModal from '../../components/customer/CheckoutModal';
 import UserMenu from '../../components/customer/UserMenu'
+import { useAuth } from "../../context/authContext"
 
 export default function CustomerDashboard() {
     const [isMobileTrayOpen, setIsMobileTrayOpen] = useState(false);
@@ -15,6 +16,8 @@ export default function CustomerDashboard() {
     const [activeCategory, setActiveCategory] = useState("All");
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [view, setView] = useState('menu');
+    const { user, logout } = useAuth();
+    const displayName = user?.name || "Guest User";
 
     useEffect(() => {
         setMenu([
@@ -87,7 +90,7 @@ export default function CustomerDashboard() {
                         <UserMenu
                             isOpen={isUserMenuOpen}
                             onClose={() => setIsUserMenuOpen(false)}
-                            userName="Shreyash Mishra"
+                            userName={displayName}
                             userRole="Customer"
                             onNavigate={setView}
                         />

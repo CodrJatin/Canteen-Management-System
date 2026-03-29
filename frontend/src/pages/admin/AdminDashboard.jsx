@@ -7,6 +7,8 @@ import {
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router";
 
+import API_BASE_URL from '../../api/config';
+
 import StockView from "../../components/admin/StockView"
 import AddItemModal from '../../components/admin/AddItemModal';
 import TabButton from '../../components/admin/TabButton';
@@ -19,93 +21,48 @@ export default function AdminDashboard() {
 
     const [activeTab, setActiveTab] = useState('stock');
     const [stock, setStock] = useState([]);
+    const [orders, setOrders] = useState([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // --- CORE LOGIC (UNTOUCHED) ---
+    // --- UPDATED FETCH LOGIC (Using Dynamic API_BASE_URL) ---
     const handleFetchStock = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/stock');
+            const response = await fetch(`${API_BASE_URL}/stock`);
             const data = await response.json();
             setStock(data);
         } catch (error) {
-            console.error("Failed to fetch:", error);
+            console.error("Failed to fetch stock:", error);
         }
     };
 
-    const [orders, setOrders] = useState([
-        {
-            id: "ORD-8821",
-            userName: "Shreyash Mishra",
-            total: 135,
-            status: "Paid",
-            date: "2026-03-28",
-            timePaid: "14:43:54",
-            timePreparing: null,
-            timeServed: null,
-            items: [
-                { name: "Masala Dosa", qty: 2, price: 60 },
-                { name: "Ginger Chai", qty: 1, price: 15 }
-            ]
-        },
-        {
-            id: "ORD-4412",
-            userName: "Anjali Sharma",
-            total: 45,
-            status: "Preparing",
-            date: "2026-03-28",
-            timePaid: "14:30:05",
-            timePreparing: "14:35:12",
-            timeServed: null,
-            items: [
-                { name: "Cold Coffee", qty: 1, price: 45 }
-            ]
-        },
-        {
-            id: "ORD-9901",
-            userName: "Rahul Verma",
-            total: 180,
-            status: "Paid",
-            date: "2026-03-28",
-            timePaid: "14:55:20",
-            timePreparing: null,
-            timeServed: null,
-            items: [
-                { name: "Thali Special", qty: 1, price: 120 },
-                { name: "Samosa (2pc)", qty: 2, price: 30 }
-            ]
-        },
-        {
-            id: "ORD-2234",
-            userName: "Priya Singh",
-            total: 60,
-            status: "Served",
-            date: "2026-03-28",
-            timePaid: "13:10:00",
-            timePreparing: "13:15:22",
-            timeServed: "13:25:40",
-            items: [
-                { name: "Masala Dosa", qty: 1, price: 60 }
-            ]
-        },
-        {
-            id: "ORD-1156",
-            userName: "Vikram Goel",
-            total: 30,
-            status: "Served",
-            date: "2026-03-28",
-            timePaid: "12:45:10",
-            timePreparing: "12:48:30",
-            timeServed: "12:55:05",
-            items: [
-                { name: "Samosa (2pc)", qty: 1, price: 30 }
-            ]
+    const fetchOrders = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${API_BASE_URL}/orders`);
+            if (!response.ok) throw new Error("Failed to fetch orders");
+            const data = await response.json();
+            setOrders(data);
+        } catch (error) {
+            console.error("Order Sync Error:", error);
+        } finally {
+            setLoading(false);
         }
-    ]);
+    };
+
+    useEffect(() => {
+        // Initial load for both
+        fetchOrders();
+        handleFetchStock();
+
+        const interval = setInterval(fetchOrders, 30000);
+        return () => clearInterval(interval);
+    }, []);
 
     const handleAddItem = async (newItem) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/stock', {
+            const response = await fetch(`${API_BASE_URL}/stock`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newItem)
@@ -115,9 +72,6 @@ export default function AdminDashboard() {
                 const savedItem = await response.json();
                 setStock(prev => [savedItem, ...prev]);
                 setIsAddModalOpen(false);
-                alert(`${savedItem.name} added to menu!`);
-            } else {
-                alert("Failed to save item to database.");
             }
         } catch (error) {
             console.error("Error adding item:", error);
@@ -125,12 +79,8 @@ export default function AdminDashboard() {
     };
 
     const handleUpdateItem = async (updatedItem) => {
-        if (!updatedItem || !updatedItem._id) {
-            console.error("Update failed: Item or _id is missing", updatedItem);
-            return;
-        }
         try {
-            const response = await fetch(`http://127.0.0.1:5000/api/stock/${updatedItem._id}`, {
+            const response = await fetch(`${API_BASE_URL}/stock/${updatedItem._id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -143,23 +93,15 @@ export default function AdminDashboard() {
                 setStock(prev => prev.map(item =>
                     item._id === updatedItem._id ? { ...updatedItem } : item
                 ));
-            } else {
-                const errorData = await response.json();
-                console.error("Update rejected by server:", errorData.error);
             }
         } catch (error) {
             console.error("Network error during update:", error);
         }
     };
 
-    const handleDeleteItem = async (itemOrId) => {
-        const itemId = typeof itemOrId === 'object' ? itemOrId._id : itemOrId;
-        if (!itemId) {
-            console.error("No ID found for deletion!");
-            return;
-        }
+    const handleDeleteItem = async (itemId) => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/api/stock/${itemId}`, {
+            const response = await fetch(`${API_BASE_URL}/stock/${itemId}`, {
                 method: 'DELETE'
             });
             if (response.ok) {
@@ -170,6 +112,8 @@ export default function AdminDashboard() {
             console.error("Delete failed:", error);
         }
     };
+
+// ... (The rest of your stats and return JSX remains the same)
 
     const stats = React.useMemo(() => {
         const revenue = orders
