@@ -6,6 +6,7 @@ import Tray from '../../components/customer/Tray';
 import CheckoutModal from '../../components/customer/CheckoutModal';
 import UserMenu from '../../components/customer/UserMenu'
 import WalletModal from '../../components/customer/WalletModal';
+import MyOrdersModal from '../../components/customer/MyOrdersModal';
 import { useAuth } from "../../context/authContext"
 import { API_ENDPOINTS } from '../../api/config';
 import Toast from '../../components/Toast';
@@ -19,6 +20,7 @@ export default function CustomerDashboard() {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeCategory, setActiveCategory] = useState("All");
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isOrdersOpen, setIsOrdersOpen] = useState(false);
     const [view, setView] = useState('menu');
     const { user, logout, login } = useAuth();
     const displayName = user?.username || "Guest User";
@@ -113,7 +115,7 @@ export default function CustomerDashboard() {
             // Map cart IDs to the format your backend expects
             const orderItems = Object.entries(cart).map(([id, qty]) => {
                 const item = menu.find(m => String(m.id) === String(id));
-                return {id:item.id, name: item.name, qty: qty, price: item.price };
+                return { id: item.id, name: item.name, qty: qty, price: item.price };
             });
 
             const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/orders/place`, {
@@ -208,6 +210,7 @@ export default function CustomerDashboard() {
                             <UserMenu
                                 isOpen={isUserMenuOpen}
                                 onClose={() => setIsUserMenuOpen(false)}
+                                isMyOrders={setIsOrdersOpen}
                                 userName={displayName}
                                 userRole="Customer"
                                 onNavigate={setView}
@@ -330,6 +333,7 @@ export default function CustomerDashboard() {
 
                         {/* 2. ORDERS LINK ACTION */}
                         <button
+                        onClick={()=>setIsOrdersOpen(true)}
                             className="aspect-square bg-[#1e293b]/90 backdrop-blur-xl text-gray-400 p-5 rounded-[30px] flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.4)] active:scale-95 transition-all border border-white/5 group hover:text-orange-500"
                         >
                             <div className="relative">
@@ -352,6 +356,12 @@ export default function CustomerDashboard() {
                 isOpen={isWalletOpen}
                 onClose={() => setIsWalletOpen(false)}
                 currentBalance={user?.walletBalance || 0}
+            />
+
+            <MyOrdersModal
+                isOpen={isOrdersOpen}
+                onClose={() => setIsOrdersOpen(false)}
+                userId={user?.id}
             />
         </div>
     );

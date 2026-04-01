@@ -3,7 +3,7 @@ import { X, CircleUserRound, ShoppingBag, LogOut, ChevronRight } from 'lucide-re
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router";
 
-export default function UserMenu({ isOpen, onClose, userName, userRole, onNavigate }) {
+export default function UserMenu({ isOpen, onClose, userName, userRole, onNavigate, isMyOrders }) {
     const { logout } = useAuth();
     const navigate = useNavigate();
 
@@ -41,7 +41,7 @@ export default function UserMenu({ isOpen, onClose, userName, userRole, onNaviga
                 {/* --- ACTIONS SECTION --- */}
                 <div className="p-4 bg-black/20 border-t border-white/5 space-y-2">
                     <button
-                        onClick={() => { onNavigate('orders'); onClose(); }}
+                        onClick={() => { isMyOrders(true); onClose(); }}
                         className="w-full flex items-center justify-between p-4 rounded-3xl hover:bg-white/5 transition-all group"
                     >
                         <div className="flex items-center gap-4">

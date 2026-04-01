@@ -168,3 +168,14 @@ def mark_as_served(order_id):
         return jsonify({"message": f"Order {order_id} served!"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@orders_bp.route('/orders/user/<user_id>', methods=['GET'])
+def get_user_orders(user_id):
+    try:
+        user_orders = list(mongo.db.orders.find({"user_id": user_id}).sort("date", -1).sort("timePaid", -1))
+        for o in user_orders:
+            o['_id'] = str(o['_id'])
+        return jsonify(user_orders), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
