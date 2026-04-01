@@ -4,7 +4,7 @@ from ..extensions import mongo
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/api/register', methods=['POST'])
+@auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
     username = data.get('username')
@@ -18,15 +18,17 @@ def register():
     # Secure the password
     hashed_password = generate_password_hash(password)
     
+    # --- UPDATED: ADDED walletBalance: 0 ---
     mongo.db.users.insert_one({
         "username": username,
         "password": hashed_password,
-        "role": role
+        "role": role,
+        "walletBalance": 0  # Every new user starts with zero balance
     })
     
     return jsonify({"message": "Account created successfully"}), 201
 
-@auth_bp.route('/api/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     username = data.get('username')
@@ -35,11 +37,17 @@ def login():
     user = mongo.db.users.find_one({"username": username})
 
     if user and check_password_hash(user['password'], password):
+        # Convert ObjectId to string if you need the ID on frontend
+        user_id = str(user['_id']) 
+        
         return jsonify({
             "message": "Login successful",
             "user": {
+                "id": user_id,
                 "username": user['username'],
-                "role": user['role']
+                "role": user['role'],
+                # .get(key, default) handles legacy users who don't have the field yet
+                "walletBalance": user.get('walletBalance', 0)
             }
         }), 200
     
