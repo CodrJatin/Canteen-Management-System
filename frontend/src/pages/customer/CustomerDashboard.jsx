@@ -32,28 +32,28 @@ export default function CustomerDashboard() {
         setToast({ show: true, message, type });
     };
 
-    // --- FETCH LIVE DATA FROM MONGODB ---
-    useEffect(() => {
-        const fetchMenu = async () => {
-            try {
-                const response = await fetch(`${API_ENDPOINTS.STOCK}`);
-                const data = await response.json();
+    const fetchMenu = async () => {
+        try {
+            const response = await fetch(`${API_ENDPOINTS.STOCK}`);
+            const data = await response.json();
 
-                if (response.ok) {
-                    // Map MongoDB _id to id so your existing logic doesn't break
-                    const normalizedData = data.map(item => ({
-                        ...item,
-                        id: item._id,
-                        image: item.image || '🍽️'
-                    }));
-                    setMenu(normalizedData);
-                }
-            } catch (err) {
-                console.error("Failed to fetch menu:", err);
-            } finally {
-                setLoading(false);
+            if (response.ok) {
+                // Map MongoDB _id to id so your existing logic doesn't break
+                const normalizedData = data.map(item => ({
+                    ...item,
+                    id: item._id,
+                    image: item.image || '🍽️'
+                }));
+                setMenu(normalizedData);
             }
-        };
+        } catch (err) {
+            console.error("Failed to fetch menu:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
 
         fetchMenu();
     }, []);
@@ -122,7 +122,7 @@ export default function CustomerDashboard() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    user_id: user.id, // Ensure this matches your localStorage key
+                    user_id: user.id,
                     items: orderItems,
                     total_amount: cartTotal
                 })
@@ -139,6 +139,9 @@ export default function CustomerDashboard() {
 
                 setCurrentOrder(data); // Save the ORD-XXXX ID
                 setCart({});           // Clear tray
+
+                await fetchMenu();
+                
             } else {
                 showToast(data.error || "Order failed", "error");
                 console.log(data.error)
