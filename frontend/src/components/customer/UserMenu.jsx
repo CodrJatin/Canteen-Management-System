@@ -1,5 +1,5 @@
 import React from 'react';
-import { CircleUserRound, ShoppingBag, LogOut, ChevronRight } from 'lucide-react';
+import { X, CircleUserRound, ShoppingBag, LogOut, ChevronRight } from 'lucide-react';
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router";
 
@@ -12,20 +12,16 @@ export default function UserMenu({ isOpen, onClose, userName, userRole, onNaviga
     return (
         <>
             {/* Dark Dimmer Backdrop */}
-            <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px]" onClick={onClose} />
+            <div className="fixed inset-0 z-40 h-100vh bg-black/60 backdrop-blur-[2px]" onClick={onClose} />
 
             {/* --- THE STACKED GLASS CONTAINER --- */}
-            <div className="absolute right-0 mt-6 w-80 
-                bg-[#1e293b]/80 backdrop-blur-2xl 
-                border border-white/10 
-                rounded-[40px] 
-                shadow-[0_40px_100px_-20px_rgba(0,0,0,0.7)] 
-                overflow-hidden z-50 
-                animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-300 
-                origin-top-right">
+            <div className="absolute right-0 mt-6 w-80 bg-[#1e293b] backdrop-blur-2xl border border-white/10 rounded-[40px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.7)] overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-300 origin-top-right">
 
                 {/* --- USER IDENTITY SECTION --- */}
                 <div className="p-8 flex flex-col items-center text-center relative">
+                    <button onClick={onClose} className="absolute right-8 top-8 p-2.5 bg-white/5 text-gray-400 rounded-full hover:bg-white/10 transition-all hover:rotate-90">
+                        <X size={20} />
+                    </button>
                     {/* Inner Accent Glow */}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-[60px] -z-10" />
 
@@ -66,13 +62,6 @@ export default function UserMenu({ isOpen, onClose, userName, userRole, onNaviga
                         </div>
                         <span className="font-bold text-sm">Logout Session</span>
                     </button>
-                </div>
-
-                {/* Secure Brand Footer */}
-                <div className="bg-black/40 py-4 border-t border-white/5">
-                    <p className="text-[8px] font-black text-gray-700 uppercase tracking-[0.5em] text-center">
-                        Canteen.Hub v2.0
-                    </p>
                 </div>
             </div>
         </>

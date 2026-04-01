@@ -1,4 +1,4 @@
-import { Edit3, Check, X, Trash2 ,AlertTriangle} from "lucide-react"
+import { Edit3, Check, X, Trash2, AlertTriangle, Tag } from "lucide-react"
 import { useState } from 'react';
 
 export default function EditableRow({ item, onSave, onDeleteReq, mobile }) {
@@ -14,11 +14,21 @@ export default function EditableRow({ item, onSave, onDeleteReq, mobile }) {
     if (isEditing && mobile) {
         return (
             <div className="bg-white/5 backdrop-blur-md p-4 rounded-3xl border border-white/10 space-y-4 w-full animate-in fade-in slide-in-from-top-2">
-                <input
-                    className="w-full p-3 bg-white/5 border border-white/5 rounded-xl font-bold text-white outline-none focus:border-orange-500/50 transition-all"
-                    value={editData.name}
-                    onChange={e => setEditData({ ...editData, name: e.target.value })}
-                />
+                <div className="space-y-2">
+                    <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest ml-2">Item Name & Category</p>
+                    <input
+                        className="w-full p-3 bg-white/5 border border-white/5 rounded-xl font-bold text-white outline-none focus:border-orange-500/50 transition-all"
+                        value={editData.name}
+                        onChange={e => setEditData({ ...editData, name: e.target.value })}
+                        placeholder="Item Name"
+                    />
+                    <input
+                        className="w-full p-3 bg-white/5 border border-white/5 rounded-xl font-bold text-orange-500 outline-none focus:border-orange-500/50 transition-all text-xs uppercase tracking-widest"
+                        value={editData.category}
+                        onChange={e => setEditData({ ...editData, category: e.target.value })}
+                        placeholder="Category (e.g. Snacks)"
+                    />
+                </div>
 
                 <div className="flex gap-2">
                     <div className="flex-1 relative">
@@ -40,8 +50,8 @@ export default function EditableRow({ item, onSave, onDeleteReq, mobile }) {
                     </div>
                 </div>
 
-                <div className="flex gap-2">
-                    <button onClick={handleSave} className="flex-1 py-3 bg-orange-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-orange-600/20">Save</button>
+                <div className="flex gap-2 pt-2">
+                    <button onClick={handleSave} className="flex-1 py-3 bg-orange-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-orange-600/20">Save Changes</button>
                     <button onClick={() => setIsEditing(false)} className="flex-1 py-3 bg-white/5 text-gray-400 rounded-xl font-black text-[10px] uppercase tracking-widest border border-white/5">Cancel</button>
                 </div>
             </div>
@@ -52,13 +62,20 @@ export default function EditableRow({ item, onSave, onDeleteReq, mobile }) {
     if (mobile) {
         return (
             <div className="border-b border-white/5 pb-5 mb-5 last:border-0">
-                <h3 className="font-black text-lg text-white tracking-tight italic">{item.name}</h3>
-                <div className="flex items-center gap-4 mt-2">
+                <div className="flex justify-between items-start">
+                    <div>
+                        <h3 className="font-black text-lg text-white tracking-tight italic uppercase">{item.name}</h3>
+                        <span className="text-[9px] font-black text-orange-500 uppercase tracking-[0.2em]">{item.category}</span>
+                    </div>
                     <span className="font-black text-orange-500 text-xl italic">₹{item.price}</span>
-                    <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${item.quantity < 10 ? 'bg-red-500/10 text-red-500' : 'bg-white/5 text-gray-400'}`}>
-                        {item.quantity} In Stock
+                </div>
+
+                <div className="flex items-center gap-4 mt-3">
+                    <span className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${item.quantity < 10 ? 'bg-red-500/10 text-red-500' : 'bg-white/5 text-gray-400'}`}>
+                        {item.quantity} Units Left
                     </span>
                 </div>
+
                 <div className="flex gap-2 mt-4">
                     <button onClick={() => setIsEditing(true)} className="flex-1 py-3 bg-white/5 text-gray-300 rounded-xl font-black text-[10px] uppercase tracking-widest border border-white/5 flex items-center justify-center gap-2">
                         <Edit3 size={14} /> Edit
@@ -75,9 +92,18 @@ export default function EditableRow({ item, onSave, onDeleteReq, mobile }) {
     if (isEditing) {
         return (
             <tr className="bg-orange-600/5 border-y border-orange-500/20 animate-in fade-in duration-300">
-                <td className="py-4 px-4"><input className="w-full p-3 bg-[#0f172a] border border-white/5 rounded-xl font-bold text-white outline-none focus:border-orange-500/50" value={editData.name} onChange={e => setEditData({ ...editData, name: e.target.value })} /></td>
-                <td className="py-4 px-4"><input type="number" className="w-full p-3 bg-[#0f172a] border border-white/5 rounded-xl font-bold text-white outline-none focus:border-orange-500/50" value={editData.price} onChange={e => setEditData({ ...editData, price: e.target.value })} /></td>
-                <td className="py-4 px-4"><input type="number" className="w-24 p-3 bg-[#0f172a] border border-white/5 rounded-xl font-bold text-white outline-none text-center focus:border-orange-500/50" value={editData.quantity} onChange={e => setEditData({ ...editData, quantity: e.target.value })} /></td>
+                <td className="py-4 px-4">
+                    <input className="w-full p-3 bg-[#0f172a] border border-white/5 rounded-xl font-bold text-white outline-none focus:border-orange-500/50" value={editData.name} onChange={e => setEditData({ ...editData, name: e.target.value })} />
+                </td>
+                <td className="py-4 px-4">
+                    <input className="w-full p-3 bg-[#0f172a] border border-white/5 rounded-xl font-bold text-orange-500 outline-none focus:border-orange-500/50 uppercase tracking-widest text-xs" value={editData.category} onChange={e => setEditData({ ...editData, category: e.target.value })} />
+                </td>
+                <td className="py-4 px-4">
+                    <input type="number" className="w-full p-3 bg-[#0f172a] border border-white/5 rounded-xl font-bold text-white outline-none focus:border-orange-500/50" value={editData.price} onChange={e => setEditData({ ...editData, price: e.target.value })} />
+                </td>
+                <td className="py-4 px-4">
+                    <input type="number" className="w-24 p-3 bg-[#0f172a] border border-white/5 rounded-xl font-bold text-white outline-none text-center focus:border-orange-500/50" value={editData.quantity} onChange={e => setEditData({ ...editData, quantity: e.target.value })} />
+                </td>
                 <td className="py-4 px-4 text-right">
                     <div className="flex justify-end gap-2">
                         <button onClick={handleSave} className="p-3 bg-orange-600 text-white rounded-xl hover:bg-orange-500 shadow-lg shadow-orange-600/20 transition-all"><Check size={18} strokeWidth={3} /></button>
@@ -92,6 +118,15 @@ export default function EditableRow({ item, onSave, onDeleteReq, mobile }) {
     return (
         <tr className="border-b border-white/5 last:border-0 hover:bg-white/2 transition-colors group">
             <td className="py-6 px-4 font-black text-white text-lg italic tracking-tight uppercase">{item.name}</td>
+
+            {/* --- CATEGORY CELL --- */}
+            <td className="py-6 px-4">
+                <span className="flex items-center gap-2 text-[10px] font-black text-orange-500 uppercase tracking-[0.2em] bg-orange-500/5 border border-orange-500/10 px-3 py-1.5 rounded-xl w-fit">
+                    <Tag size={10} strokeWidth={3} />
+                    {item.category || "All"}
+                </span>
+            </td>
+
             <td className="py-6 px-4 font-black text-orange-500 text-xl italic tracking-tighter">₹{item.price}</td>
             <td className="py-6 px-4">
                 <div className="flex items-center gap-2">

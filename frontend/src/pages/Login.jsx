@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/authContext';
 import { useNavigate } from 'react-router';
 import {
-    Lock, User, ShieldCheck, Utensils,
+    User, ShieldCheck, Utensils,
     ScanQrCode, ChevronRight, UserPlus, LogIn
 } from 'lucide-react';
-// We'll update TabButton internally to match the new theme.
 import TabButton from '../components/admin/TabButton';
 import { API_ENDPOINTS } from '../api/config';
+import Toast from '../components/Toast'
 
 export default function Login() {
     const { login } = useAuth();
@@ -16,16 +16,26 @@ export default function Login() {
     const [mode, setMode] = useState('login');
     const [role, setRole] = useState('customer');
     const [formData, setFormData] = useState({ username: '', password: '', confirmPassword: '' });
+    const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+    const showToast = (message, type = 'success') => {
+        setToast({ show: true, message, type });
+    };
 
     const roles = [
         { id: 'customer', label: 'User', icon: <User size={16} /> },
-        { id: 'cook', label: 'Chef', icon: <Utensils size={16} /> },
+        { id: 'chef', label: 'Chef', icon: <Utensils size={16} /> },
         { id: 'scanner', label: 'Scan', icon: <ScanQrCode size={16} /> },
         { id: 'admin', label: 'Admin', icon: <ShieldCheck size={16} /> },
     ];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Basic Validation for Registration
+        if (mode === 'register' && formData.password !== formData.confirmPassword) {
+            return showToast("Passwords do not match", "error");
+        }
 
         const url = mode === 'login' ? API_ENDPOINTS.LOGIN : API_ENDPOINTS.REGISTER;
 
@@ -44,47 +54,60 @@ export default function Login() {
 
             if (response.ok) {
                 if (mode === 'login') {
-                    // If login was successful, save the REAL user data
-                    login(data.user);
-                    navigate(`/${data.user.role}`);
+                    showToast("Access Granted. Welcome!"); // Success Toast
+                    setTimeout(() => {
+                        login(data.user);
+                        navigate(`/${data.user.role}`);
+                    }, 1500); // Small delay so they can actually see the toast
                 } else {
-                    // If registration was successful, switch to login mode
-                    alert("Account created! Please sign in.");
+                    showToast("Account Created! Sign in now.");
                     setMode('login');
                 }
             } else {
-                alert(data.error || "Something went wrong");
+                // REPLACE alert WITH showToast
+                showToast(data.error || "Authentication Failed", "error");
             }
         } catch (err) {
+            showToast("Server Connection Refused", "error");
             console.error("Auth Error:", err);
         }
     };
 
     return (
         <div className="min-h-screen w-full bg-[#0f172a] flex items-center justify-center p-6 selection:bg-orange-500/30 font-sans relative overflow-hidden">
+            {/* --- Toast --- */}
+            {toast.show && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast({ ...toast, show: false })}
+                />
+            )}
             {/* --- ORANGE DECORATIVE BLOBS --- */}
             <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-orange-600/15 rounded-full blur-[130px] pointer-events-none" />
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-600/10 rounded-full blur-[160px] pointer-events-none" />
 
             <div className="w-full max-w-115 relative z-10 animate-in fade-in zoom-in-95 duration-500">
                 {/* --- FLOATING ORANGE ROLE BAR --- */}
-                <div className="flex justify-center mb-10">
-                    <div className="gap-2 inline-flex p-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-3xl">
-                        {roles.map((r) => (
-                            <button
-                                key={r.id}
-                                onClick={() => setRole(r.id)}
-                                className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl text-xs font-black transition-all duration-300 ${role === r.id
+                {mode == "register" && (
+                    <div className="flex justify-center mb-10">
+                        <div className="gap-2 inline-flex p-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-3xl">
+                            {roles.map((r) => (
+                                <button
+                                    key={r.id}
+                                    onClick={() => setRole(r.id)}
+                                    className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl text-xs font-black transition-all duration-300 ${role === r.id
                                         ? 'bg-orange-600 text-white shadow-xl shadow-orange-600/30 scale-105' // Active Orange
                                         : 'text-gray-400 hover:text-white hover:bg-white/5'
-                                    }`}
-                            >
-                                {r.icon}
-                                <span className="hidden sm:inline uppercase tracking-tighter">{r.label}</span>
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                                        }`}
+                                >
+                                    {r.icon}
+                                    <span className="hidden sm:inline uppercase tracking-tighter">{r.label}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>)}
+
 
                 {/* --- MAIN CONTENT CARD (GLASSMORHISM) --- */}
                 <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[45px] p-10 md:p-14 shadow-[0_32px_64px_-15px_rgba(0,0,0,0.6)]">

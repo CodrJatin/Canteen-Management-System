@@ -17,7 +17,6 @@ export default function StockView({ stock, onUpdate, onDeleteReq, onOpenAddModal
                 </div>
 
                 <div className="flex gap-3 w-full md:w-auto">
-                    {/* MANUAL FETCH BUTTON (GLASS) */}
                     <button
                         onClick={onFetchManual}
                         className="flex-1 md:flex-none bg-white/5 text-gray-400 px-5 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest border border-white/5 hover:bg-white/10 hover:text-white transition-all cursor-pointer flex items-center justify-center gap-2"
@@ -26,7 +25,6 @@ export default function StockView({ stock, onUpdate, onDeleteReq, onOpenAddModal
                         Sync Data
                     </button>
 
-                    {/* ADD NEW ITEM BUTTON (ORANGE) */}
                     <button
                         onClick={onOpenAddModal}
                         className="flex-1 md:flex-none bg-orange-600 text-white px-6 md:px-8 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-500 shadow-2xl shadow-orange-600/20 transition-all cursor-pointer flex items-center justify-center gap-2"
@@ -42,6 +40,8 @@ export default function StockView({ stock, onUpdate, onDeleteReq, onOpenAddModal
                     <thead>
                         <tr>
                             <th className="pb-6 px-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] text-left">Item Identity</th>
+                            {/* --- NEW CATEGORY COLUMN --- */}
+                            <th className="pb-6 px-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] text-left">Classification</th>
                             <th className="pb-6 px-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] text-left">Unit Price</th>
                             <th className="pb-6 px-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] text-left">Volume</th>
                             <th className="pb-6 px-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] text-right">Operations</th>
@@ -59,7 +59,8 @@ export default function StockView({ stock, onUpdate, onDeleteReq, onOpenAddModal
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="4" className="py-20 text-center">
+                                {/* --- UPDATED COLSPAN TO 5 --- */}
+                                <td colSpan="5" className="py-20 text-center">
                                     <div className="flex flex-col items-center gap-4 opacity-20 grayscale">
                                         <PackageSearch size={48} className="text-gray-400" />
                                         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">

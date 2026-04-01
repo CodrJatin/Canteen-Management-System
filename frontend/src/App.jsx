@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ChefDashboard from "./pages/chef/ChefDashboard";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
+import Scanner from "./pages/scanner/Scanner";
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuth } from "./context/authContext";
 
@@ -45,6 +46,16 @@ function App() {
         element={
           <ProtectedRoute allowedRole="chef">
             <ChefDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* --- PROTECTED SCANNER ROUTE --- */}
+      <Route
+        path="/scanner"
+        element={
+          <ProtectedRoute allowedRole="scanner"> {/* Or use "admin" if needed */}
+            <Scanner />
           </ProtectedRoute>
         }
       />
