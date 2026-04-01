@@ -1,18 +1,20 @@
 import { useState } from "react";
-import { X, PackagePlus } from "lucide-react";
+import { X, PackagePlus, ChevronDown } from "lucide-react";
 
 export default function AddItemModal({ onClose, onAdd }) {
-    // Logic remains untouched: matching your MongoDB 'quantity' field
-    const [form, setForm] = useState({ name: '', price: '', quantity: '' });
+    const [form, setForm] = useState({ name: '', price: '', quantity: '', category: '' });
+
+    const categories = ["Main Course", "Snacks", "Beverages", "Desserts"];
 
     const handleSubmit = () => {
-        if (!form.name || !form.price || !form.quantity) {
-            alert("Please fill in all fields");
+        // 2. Updated validation to include category
+        if (!form.name || !form.price || !form.quantity || !form.category) {
+            alert("Please fill in all fields including Category");
             return;
         }
         onAdd(form);
     };
-
+    
     return (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-in fade-in duration-300">
             <div className="bg-[#1e293b] w-full max-w-md rounded-[45px] p-8 md:p-12 shadow-[0_32px_64px_-15px_rgba(0,0,0,0.7)] border border-white/10 animate-in zoom-in-95 relative overflow-hidden text-left">
@@ -51,6 +53,24 @@ export default function AddItemModal({ onClose, onAdd }) {
                         />
                     </div>
 
+                    {/* --- CATEGORY INPUT (NEW) --- */}
+                    <div className="relative group">
+                        <label className="text-[10px] font-black uppercase text-gray-500 ml-1 tracking-widest">Classification</label>
+                        <div className="relative">
+                            <select
+                                value={form.category}
+                                onChange={e => setForm({ ...form, category: e.target.value })}
+                                className="w-full mt-2 px-6 py-4 bg-white/5 border border-white/5 rounded-2xl font-bold text-white outline-none focus:bg-white/10 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/5 transition-all appearance-none cursor-pointer"
+                            >
+                                <option value="" disabled className="bg-[#1e293b]">Select Category</option>
+                                {categories.map(cat => (
+                                    <option key={cat} value={cat} className="bg-[#1e293b]">{cat}</option>
+                                ))}
+                            </select>
+                            <ChevronDown size={16} className="absolute right-6 top-[60%] -translate-y-1/2 text-gray-500 pointer-events-none group-focus-within:text-orange-500 transition-colors" />
+                        </div>
+                    </div>
+
                     <div className="grid grid-cols-2 gap-6">
                         {/* --- PRICE INPUT --- */}
                         <div>
@@ -87,7 +107,7 @@ export default function AddItemModal({ onClose, onAdd }) {
                         </button>
                         <button
                             onClick={handleSubmit}
-                            className="flex-2 py-4 bg-orange-600 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl hover:bg-orange-500 shadow-2xl shadow-orange-600/20 active:scale-95 transition-all"
+                            className="flex-2 py-4 bg-orange-600 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl hover:bg-orange-500 shadow-2xl shadow-orange-600/20 active:scale-95 transition-all px-8"
                         >
                             Commit to Stock
                         </button>

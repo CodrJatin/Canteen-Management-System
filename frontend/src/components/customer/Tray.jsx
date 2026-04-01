@@ -1,12 +1,12 @@
-import { ShoppingBag, Plus, Minus, ChevronRight, X } from 'lucide-react';
+import { ShoppingBag, Plus, Minus, ChevronRight, X, Loader2 } from 'lucide-react';
 
-export default function UnifiedTray({ cartEntries, menu, updateCart, cartTotal, cartCount, isMobile = false, onClose, onCheckout }) {
+export default function UnifiedTray({ cartEntries, clearCart, menu, updateCart, cartTotal, cartCount, isMobile = false, onClose, onCheckout, isProcessing = false }) {
 
     const renderItems = () => (
         <div className={`grow overflow-y-auto pr-2 custom-scrollbar ${isMobile ? 'space-y-4' : 'space-y-3'}`}>
             {cartEntries.length > 0 ? (
                 cartEntries.map(([id, qty]) => {
-                    const item = menu.find(m => m.id === parseInt(id));
+                    const item = menu.find(m => String(m.id) === String(id));
                     if (!item) return null;
 
                     return (
@@ -17,11 +17,14 @@ export default function UnifiedTray({ cartEntries, menu, updateCart, cartTotal, 
                             </div>
 
                             <div className="flex items-center gap-3 bg-black/20 p-1.5 rounded-xl border border-white/5">
-                                <button onClick={() => updateCart(parseInt(id), -1)} className="p-1 text-gray-400 hover:text-orange-500 transition-colors">
+                                <button onClick={() => updateCart(id, -1)} className="p-1 text-gray-400 hover:text-orange-500 transition-colors">
                                     <Minus size={14} strokeWidth={3} />
                                 </button>
+
                                 <span className="font-black text-xs min-w-5 text-center text-orange-500">{qty}</span>
-                                <button onClick={() => updateCart(parseInt(id), 1)} className="p-1 text-gray-400 hover:text-orange-500 transition-colors">
+
+                                {/* REMOVED parseInt here */}
+                                <button onClick={() => updateCart(id, 1)} className="p-1 text-gray-400 hover:text-orange-500 transition-colors">
                                     <Plus size={14} strokeWidth={3} />
                                 </button>
                             </div>
@@ -48,9 +51,18 @@ export default function UnifiedTray({ cartEntries, menu, updateCart, cartTotal, 
                         {isMobile ? "Order Review" : "The Tray"}
                     </h2>
                 </div>
-                <span className="bg-white/5 border border-white/10 text-gray-400 px-3 py-1 rounded-xl font-black text-[10px] uppercase tracking-widest">
-                    {cartCount} Items
-                </span>
+                {/* --- REPLACED COUNTER WITH CLEAR BUTTON --- */}
+                {cartCount > 0 && (
+                    <button
+                        onClick={() => clearCart()}
+                        className="group flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 px-3 py-1.5 rounded-xl transition-all active:scale-95"
+                    >
+                        <X size={14} className="text-red-500 group-hover:rotate-90 transition-transform duration-300" />
+                        <span className="text-red-500 font-black text-[10px] uppercase tracking-widest">
+                            Clear
+                        </span>
+                    </button>
+                )}
             </div>
 
             {renderItems()}
@@ -65,12 +77,29 @@ export default function UnifiedTray({ cartEntries, menu, updateCart, cartTotal, 
                 </div>
 
                 <button
-                    disabled={cartCount === 0}
+                    // Disable if cart is empty OR if we are currently processing an order
+                    disabled={cartCount === 0 || isProcessing}
                     onClick={onCheckout}
-                    className="w-full bg-orange-600 text-white py-5 rounded-[25px] font-black text-sm uppercase tracking-widest shadow-2xl shadow-orange-600/20 hover:bg-orange-500 disabled:opacity-20 disabled:grayscale transition-all flex items-center justify-center gap-3 group active:scale-95"
+                    className={`
+        w-full py-5 rounded-[25px] font-black text-sm uppercase tracking-widest transition-all 
+        flex items-center justify-center gap-3 group active:scale-95 shadow-2xl
+        ${isProcessing
+                            ? 'bg-orange-900/50 text-orange-500/50 cursor-not-allowed'
+                            : 'bg-orange-600 text-white hover:bg-orange-500 shadow-orange-600/20'}
+        disabled:opacity-20 disabled:grayscale
+    `}
                 >
-                    {isMobile ? 'Initiate Payment' : 'Confirm Order'}
-                    <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                    {isProcessing ? (
+                        <>
+                            <Loader2 size={18} className="animate-spin" />
+                            Processing...
+                        </>
+                    ) : (
+                        <>
+                            Confirm Order
+                            <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        </>
+                    )}
                 </button>
             </div>
         </div>

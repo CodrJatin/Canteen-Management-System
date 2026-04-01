@@ -5,6 +5,7 @@ from bson import ObjectId
 stock_bp = Blueprint('stock', __name__)
 db = get_db()
 
+@stock_bp.route('/stock', methods=['GET'])
 
 @stock_bp.route('/stock', methods=['GET'])
 def get_stock():
@@ -17,7 +18,7 @@ def get_stock():
         return jsonify({"error": str(e)}), 500
 
 
-@stock_bp.route('/stock', methods=['POST'])
+@stock_bp.route('/api/stock', methods=['POST'])
 def add_item():
     try:
         new_item = request.json
@@ -38,7 +39,7 @@ def update_stock_item(item_id): # Renamed to be unique
         data = request.json
         # Convert numeric strings to actual numbers
         if 'price' in data: data['price'] = float(data['price'])
-        if 'quantity' in data: data['stock'] = int(data['quantity'])
+        if 'quantity' in data: data['quantity'] = int(data['quantity'])
 
         result = db.stock.update_one(
             {'_id': ObjectId(item_id)},
@@ -52,7 +53,7 @@ def update_stock_item(item_id): # Renamed to be unique
         return jsonify({"error": str(e)}), 500
 
 
-@stock_bp.route('/stock/<item_id>', methods=['DELETE'])
+@stock_bp.route('/api/stock/<item_id>', methods=['DELETE'])
 def delete_stock_item(item_id): # Renamed to be unique
     try:
         result = db.stock.delete_one({'_id': ObjectId(item_id)})

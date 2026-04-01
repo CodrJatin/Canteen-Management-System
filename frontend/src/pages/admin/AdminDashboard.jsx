@@ -6,7 +6,6 @@ import {
 
 import { useAuth } from "../../context/authContext";
 import { useNavigate } from "react-router";
-
 import API_BASE_URL from '../../api/config';
 
 import StockView from "../../components/admin/StockView"
@@ -14,6 +13,7 @@ import AddItemModal from '../../components/admin/AddItemModal';
 import TabButton from '../../components/admin/TabButton';
 import StatCard from '../../components/admin/StatCard';
 import OrdersView from '../../components/admin/OrdersView';
+import Toast from '../../components/Toast';
 
 export default function AdminDashboard() {
     const { logout } = useAuth();
@@ -25,6 +25,11 @@ export default function AdminDashboard() {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
+
+    const showToast = (message, type = 'success') => {
+        setToast({ visible: true, message, type });
+    };
 
     // --- UPDATED FETCH LOGIC (Using Dynamic API_BASE_URL) ---
     const handleFetchStock = async () => {
@@ -32,8 +37,10 @@ export default function AdminDashboard() {
             const response = await fetch(`${API_BASE_URL}/stock`);
             const data = await response.json();
             setStock(data);
+            showToast("Order synced successfully", "success")
         } catch (error) {
             console.error("Failed to fetch stock:", error);
+            showToast("Failed to fetch stock data", "error");
         }
     };
 
@@ -46,6 +53,7 @@ export default function AdminDashboard() {
             setOrders(data);
         } catch (error) {
             console.error("Order Sync Error:", error);
+            showToast("Order sync protocol failed", "error");
         } finally {
             setLoading(false);
         }
@@ -72,9 +80,13 @@ export default function AdminDashboard() {
                 const savedItem = await response.json();
                 setStock(prev => [savedItem, ...prev]);
                 setIsAddModalOpen(false);
+                showToast(`${newItem.name} appended to stock`, "success");
+            } else {
+                showToast("Failed to add item", "error");
             }
         } catch (error) {
             console.error("Error adding item:", error);
+            showToast("Connection error during add", "error");
         }
     };
 
@@ -86,20 +98,26 @@ export default function AdminDashboard() {
                 body: JSON.stringify({
                     name: updatedItem.name,
                     price: Number(updatedItem.price),
-                    quantity: Number(updatedItem.quantity)
+                    quantity: Number(updatedItem.quantity),
+                    category: updatedItem.category
                 })
             });
             if (response.ok) {
                 setStock(prev => prev.map(item =>
                     item._id === updatedItem._id ? { ...updatedItem } : item
                 ));
+                showToast(`${updatedItem.name} updated successfully`, "success");
+            } else {
+                showToast("Update operation failed", "error");
             }
         } catch (error) {
             console.error("Network error during update:", error);
+            showToast("Database link error", "error");
         }
     };
 
     const handleDeleteItem = async (itemId) => {
+        const itemName = deleteTarget?.name;
         try {
             const response = await fetch(`${API_BASE_URL}/stock/${itemId}`, {
                 method: 'DELETE'
@@ -107,13 +125,15 @@ export default function AdminDashboard() {
             if (response.ok) {
                 setStock(prev => prev.filter(i => i._id !== itemId));
                 setDeleteTarget(null);
+                showToast(`${itemName} purged from database`, "success");
+            } else {
+                showToast("Deletion denied by server", "error");
             }
         } catch (error) {
             console.error("Delete failed:", error);
+            showToast("Critical connection error", "error");
         }
     };
-
-// ... (The rest of your stats and return JSX remains the same)
 
     const stats = React.useMemo(() => {
         const revenue = orders
@@ -126,6 +146,16 @@ export default function AdminDashboard() {
 
     return (
         <div className="min-h-screen bg-[#0f172a] flex flex-col font-sans text-white overflow-x-hidden relative text-left">
+
+            {/* --- CUSTOM TOAST SYSTEM --- */}
+            {toast.visible && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast({ ...toast, visible: false })}
+                />
+            )}
+
             {/* --- THEME AMBIENCE --- */}
             <div className="absolute top-0 left-1/4 w-150 h-150 bg-orange-600/10 rounded-full blur-[140px] pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-125 h-125 bg-blue-600/5 rounded-full blur-[120px] pointer-events-none" />

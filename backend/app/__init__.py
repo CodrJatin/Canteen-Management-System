@@ -6,7 +6,7 @@ from .extensions import mongo
 from .routes.orders import orders_bp
 from .routes.stock import stock_bp 
 from .routes.auth import auth_bp
-
+from .routes.wallet import wallet_bp
 
 # Load the variables from .env into the system
 load_dotenv()
@@ -28,40 +28,42 @@ def create_app():
         # Ensure there's no trailing slash in the URL from env
         origins_whitelist.append(production_url.rstrip('/'))
 
-    # 2. Initialize CORS with broad support for the Preflight check
+    # 2. Initialize CORS (Supports Credentials & Patch)
     CORS(app, resources={
         r"/api/*": {
             "origins": origins_whitelist,
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization"],
             "supports_credentials": True
         }
     })
 
-    # 3. GLOBAL PREFLIGHT HANDLER (The Vercel Fix)
+    # 3. GLOBAL PREFLIGHT & CORS HANDLER (The Vercel Fix)
     @app.after_request
-    def handle_options(response):
-        # Add CORS headers to EVERY response
-        response.headers.add('Access-Control-Allow-Origin', os.getenv("FRONTEND_URL"))
+    def handle_cors_and_options(response):
+        # Dynamically set origin to allow credentials
+        origin = request.headers.get('Origin')
+        if origin in origins_whitelist:
+            response.headers.add('Access-Control-Allow-Origin', origin)
+            
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS')
         response.headers.add('Access-Control-Allow-Credentials', 'true')
         
         # If the browser is just doing a preflight check (OPTIONS)
-        # we return a 200 OK immediately so it doesn't 404.
         if request.method == 'OPTIONS':
             return make_response('', 200)
             
         return response
 
-    # Database Configuration
+    # 4. Database Configuration
     app.config["MONGO_URI"] = os.getenv("MONGO_URI")
     mongo.init_app(app)
 
-    # Register Blueprints
-    # Note: Ensure these blueprints use the url_prefix='/api' if your React code expects it
+    # 5. Register Blueprints with Organized Prefixes
     app.register_blueprint(stock_bp, url_prefix='/api')
     app.register_blueprint(orders_bp, url_prefix='/api')
     app.register_blueprint(auth_bp, url_prefix='/api')
+    app.register_blueprint(wallet_bp, url_prefix='/api')
 
     return app
