@@ -23,7 +23,7 @@ def register():
         "username": username,
         "password": hashed_password,
         "role": role,
-        "walletBalance": 0  # Every new user starts with zero balance
+        "walletBalance": 0
     })
     
     return jsonify({"message": "Account created successfully"}), 201

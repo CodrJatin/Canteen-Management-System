@@ -6,8 +6,6 @@ stock_bp = Blueprint('stock', __name__)
 db = get_db()
 
 @stock_bp.route('/stock', methods=['GET'])
-
-@stock_bp.route('/stock', methods=['GET'])
 def get_stock():
     try:
         items = list(db.stock.find()) 
@@ -18,7 +16,7 @@ def get_stock():
         return jsonify({"error": str(e)}), 500
 
 
-@stock_bp.route('/api/stock', methods=['POST'])
+@stock_bp.route('/stock', methods=['POST'])
 def add_item():
     try:
         new_item = request.json
@@ -53,8 +51,8 @@ def update_stock_item(item_id): # Renamed to be unique
         return jsonify({"error": str(e)}), 500
 
 
-@stock_bp.route('/api/stock/<item_id>', methods=['DELETE'])
-def delete_stock_item(item_id): # Renamed to be unique
+@stock_bp.route('/stock/<item_id>', methods=['DELETE'])
+def delete_stock_item(item_id):
     try:
         result = db.stock.delete_one({'_id': ObjectId(item_id)})
         if result.deleted_count:
