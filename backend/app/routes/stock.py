@@ -1,14 +1,13 @@
 from flask import Blueprint, request, jsonify
-from app.models.db import get_db
 from bson import ObjectId
+from app.extensions import mongo
 
 stock_bp = Blueprint('stock', __name__)
-db = get_db()
 
 @stock_bp.route('/stock', methods=['GET'])
 def get_stock():
     try:
-        items = list(db.stock.find()) 
+        items = list(mongo.db.stock.find()) 
         for item in items:
             item['_id'] = str(item['_id'])
         return jsonify(items)
@@ -24,7 +23,7 @@ def add_item():
         new_item['quantity'] = int(new_item.get('quantity', 0))
         new_item['price'] = float(new_item.get('price', 0))
         
-        result = db.stock.insert_one(new_item)
+        result = mongo.db.stock.insert_one(new_item)
         new_item['_id'] = str(result.inserted_id)
         return jsonify(new_item), 201
     except Exception as e:
@@ -39,7 +38,7 @@ def update_stock_item(item_id): # Renamed to be unique
         if 'price' in data: data['price'] = float(data['price'])
         if 'quantity' in data: data['quantity'] = int(data['quantity'])
 
-        result = db.stock.update_one(
+        result = mongo.db.stock.update_one(
             {'_id': ObjectId(item_id)},
             {'$set': data}
         )
@@ -54,7 +53,7 @@ def update_stock_item(item_id): # Renamed to be unique
 @stock_bp.route('/stock/<item_id>', methods=['DELETE'])
 def delete_stock_item(item_id):
     try:
-        result = db.stock.delete_one({'_id': ObjectId(item_id)})
+        result = mongo.db.stock.delete_one({'_id': ObjectId(item_id)})
         if result.deleted_count:
             return jsonify({"message": "Deleted successfully"}), 200
         return jsonify({"error": "Item not found"}), 404

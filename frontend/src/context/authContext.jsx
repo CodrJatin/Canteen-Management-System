@@ -1,31 +1,27 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
+    
+    const [user, setUser] = useState(() => {
         const savedUser = localStorage.getItem('canteen_user');
 
-        // --- SAFETY CHECK START ---
         if (savedUser && savedUser !== "undefined") {
             try {
                 const parsedUser = JSON.parse(savedUser);
-                // Ensure the parsed data is actually an object
                 if (parsedUser && typeof parsedUser === 'object') {
-                    setUser(parsedUser);
+                    return parsedUser;
                 }
             } catch (error) {
                 console.error("Auth hydration failed:", error);
-                localStorage.removeItem('canteen_user'); // Clean up bad data
+                localStorage.removeItem('canteen_user');
             }
         }
-        // --- SAFETY CHECK END ---
 
-        setLoading(false);
-    }, []);
+        return null
+    });
+    ;
 
     const login = (userData) => {
         // Only save if userData is valid to prevent "undefined" from leaking in
@@ -41,8 +37,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
-            {!loading && children}
+        <AuthContext.Provider value={{ user, login, logout }}>
+            {children}
         </AuthContext.Provider>
     );
 };
