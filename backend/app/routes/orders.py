@@ -93,13 +93,8 @@ def place_order():
         return jsonify({"error": str(e)}), 500
     
 
-@orders_bp.route('/orders/status/<order_id>', methods=['PATCH', 'OPTIONS'])
+@orders_bp.route('/orders/status/<order_id>', methods=['PATCH'])
 def update_order_status(order_id):
-
-
-    if request.method == 'OPTIONS':
-        return '', 200 # Handle the preflight handshake
-
 
     try:
         # We search for the custom order_id (e.g., ORD-XXXXXX)
@@ -145,11 +140,8 @@ def get_chef_orders():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@orders_bp.route('/orders/serve/<order_id>', methods=['PATCH', 'OPTIONS'])
+@orders_bp.route('/orders/serve/<order_id>', methods=['PATCH'])
 def mark_as_served(order_id):
-    if request.method == 'OPTIONS':
-        return '', 200
-        
     try:
         IST = timezone(timedelta(hours=5, minutes=30))
         now = datetime.now(IST).strftime("%H:%M:%S")

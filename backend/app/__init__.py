@@ -38,24 +38,6 @@ def create_app():
         }
     })
 
-    # 3. GLOBAL PREFLIGHT & CORS HANDLER (The Vercel Fix)
-    @app.after_request
-    def handle_cors_and_options(response):
-        # Dynamically set origin to allow credentials
-        origin = request.headers.get('Origin')
-        if origin in origins_whitelist:
-            response.headers.add('Access-Control-Allow-Origin', origin)
-            
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS')
-        response.headers.add('Access-Control-Allow-Credentials', 'true')
-        
-        # If the browser is just doing a preflight check (OPTIONS)
-        if request.method == 'OPTIONS':
-            return make_response('', 200)
-            
-        return response
-
     # 4. Database Configuration
     app.config["MONGO_URI"] = os.getenv("MONGO_URI")
     mongo.init_app(app)
