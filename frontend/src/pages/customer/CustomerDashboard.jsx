@@ -365,6 +365,7 @@ export default function CustomerDashboard() {
                 isOpen={isOrdersOpen}
                 onClose={() => setIsOrdersOpen(false)}
                 userId={user?.id}
+                onOrderDeleted={fetchMenu}
             />
         </div>
     );

@@ -8,6 +8,7 @@ export default function AdminScanner() {
     const [status, setStatus] = useState('ready');
     const [lastOrder, setLastOrder] = useState("");
     const [isScannerStarted, setIsScannerStarted] = useState(false);
+    const [manualId, setManualId] = useState("");
 
     // Camera States
     const [cameras, setCameras] = useState([]);
@@ -62,6 +63,14 @@ export default function AdminScanner() {
             setIsScannerStarted(false);
             alert("Camera Access Denied or Not Found. Check HTTPS/Localhost.");
         }
+    };
+
+    const handleManualSubmit = (e) => {
+        e.preventDefault();
+        if (!manualId.trim()) return;
+        const formattedId = `ORD-${manualId.trim().toUpperCase()}`;
+        handleScanSuccess(formattedId);
+        setManualId("");
     };
 
     // Handle dropdown change
@@ -162,8 +171,31 @@ export default function AdminScanner() {
                     )}
                 </div>
 
-                <div className="text-center space-y-2">
-                    <p className="text-gray-500 font-black text-[9px] uppercase tracking-[0.4em]">Scan Student Order QR</p>
+                <div className="text-center space-y-2 mt-4">
+                    <p className="text-gray-500 font-black text-[9px] uppercase tracking-[0.4em] mb-4">Scan Student Order QR</p>
+                    
+                    <div className="flex items-center justify-center gap-4 py-2">
+                        <div className="h-px bg-white/10 flex-1"></div>
+                        <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest px-2">OR ENTER MANUAL ID</span>
+                        <div className="h-px bg-white/10 flex-1"></div>
+                    </div>
+                    
+                    <form onSubmit={handleManualSubmit} className="flex gap-2">
+                        <div className="relative flex-1">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-black italic text-sm">ORD-</span>
+                            <input
+                                type="text"
+                                value={manualId}
+                                onChange={(e) => setManualId(e.target.value)}
+                                placeholder="XXXXXX"
+                                maxLength={6}
+                                className="w-full bg-white/5 border border-white/10 pl-[52px] p-4 rounded-2xl text-sm font-black text-white placeholder:text-gray-600 uppercase tracking-[0.1em] focus:outline-none focus:border-orange-500 transition-colors"
+                            />
+                        </div>
+                        <button type="submit" disabled={!manualId.trim()} className="bg-orange-600 text-white px-6 rounded-2xl font-black uppercase tracking-wider text-xs hover:bg-orange-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            GO
+                        </button>
+                    </form>
                 </div>
             </div>
 

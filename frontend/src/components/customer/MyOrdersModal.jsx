@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { X, ShoppingBag, Clock, Receipt, QrCode } from 'lucide-react';
+import { X, ShoppingBag, Clock, Receipt, QrCode, Trash2 } from 'lucide-react';
 import API_BASE_URL from '../../api/config';
 import {QRCode} from 'react-qr-code';
+import { useAuth } from "../../context/authContext";
+import Toast from '../../components/Toast';
 
-export default function MyOrdersModal({ isOpen, onClose, userId }) {
+export default function MyOrdersModal({ isOpen, onClose, userId, onOrderDeleted }) {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     // 1. State to track which order's QR to show
     const [qrTarget, setQrTarget] = useState(null);
+    const [orderToDelete, setOrderToDelete] = useState(null);
+    const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+    const { user, login } = useAuth();
+
+    const showToast = (message, type = 'success') => {
+        setToast({ show: true, message, type });
+    };
 
     useEffect(() => {
         if (isOpen && userId) {
@@ -28,10 +37,50 @@ export default function MyOrdersModal({ isOpen, onClose, userId }) {
         }
     };
 
+    const confirmDeleteOrder = async () => {
+        if (!orderToDelete) return;
+        const orderId = orderToDelete;
+        setOrderToDelete(null); // Hide prompt
+
+        try {
+            setLoading(true);
+            const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+                method: 'DELETE',
+            });
+            
+            const data = await response.json();
+
+            if (response.ok) {
+                // Update UI instantly
+                setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+                // Update global user balance
+                if (user && login && data.new_balance !== undefined) {
+                    login({ ...user, walletBalance: data.new_balance });
+                }
+                showToast(data.message || "Order cancelled and refunded", "success");
+                if (onOrderDeleted) onOrderDeleted();
+            } else {
+                showToast(data.error || "Failed to cancel order", "error");
+            }
+        } catch (error) {
+            console.error("Error deleting order:", error);
+            showToast("Server connection failed", "error");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-in fade-in duration-300">
+            {toast.show && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast({ ...toast, show: false })}
+                />
+            )}
             <div className="bg-[#1e293b] w-full max-w-2xl h-[80vh] rounded-[45px] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.7)] border border-white/10 flex flex-col overflow-hidden animate-in zoom-in-95 relative">
 
                 <div className="absolute -top-24 -left-24 w-64 h-64 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
@@ -89,7 +138,18 @@ export default function MyOrdersModal({ isOpen, onClose, userId }) {
                                         <div className="flex items-center gap-2 text-gray-500 text-[10px] font-bold uppercase tracking-widest">
                                             <Clock size={14} /> {order.timePaid}
                                         </div>
-                                        <p className="text-lg font-black text-white italic tracking-tighter">₹{order.total}</p>
+                                        <div className="flex items-center gap-3">
+                                            <p className="text-lg font-black text-white italic tracking-tighter">₹{order.total}</p>
+                                            {order.status !== 'Served' && (
+                                                <button
+                                                    onClick={() => setOrderToDelete(order.id)}
+                                                    className="p-1.5 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                                                    title="Cancel Order"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
@@ -110,6 +170,35 @@ export default function MyOrdersModal({ isOpen, onClose, userId }) {
                     )}
                 </div>
             </div>
+
+            {/* --- THE DELETE PROMPT MODAL --- */}
+            {orderToDelete && (
+                <div className="fixed inset-0 z-120 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-[#1e293b] w-full max-w-sm rounded-[35px] p-8 border border-white/10 shadow-2xl text-center relative animate-in zoom-in-95 duration-300">
+                        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
+                            <Trash2 size={24} className="text-red-500" />
+                        </div>
+                        <h3 className="text-xl font-black text-white italic uppercase tracking-tighter mb-2">Cancel Order?</h3>
+                        <p className="text-sm font-medium text-gray-400 mb-6 px-2">
+                            Are you sure you want to cancel this order? The amount will be refunded to your wallet.
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setOrderToDelete(null)}
+                                className="flex-1 px-4 py-3 rounded-xl font-bold bg-white/5 text-white hover:bg-white/10 transition-all border border-white/10"
+                            >
+                                Keep Order
+                            </button>
+                            <button
+                                onClick={confirmDeleteOrder}
+                                className="flex-1 px-4 py-3 rounded-xl font-black bg-red-600 text-white hover:bg-red-500 transition-all shadow-lg shadow-red-600/20"
+                            >
+                                Cancel Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* --- 3. THE QR MODAL POPUP --- */}
             {qrTarget && (

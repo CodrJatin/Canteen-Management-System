@@ -171,3 +171,53 @@ def get_user_orders(user_id):
         return jsonify(user_orders), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@orders_bp.route('/orders/<order_id>', methods=['DELETE'])
+def delete_order(order_id):
+    try:
+        # We search for the custom order_id (e.g., ORD-XXXXXX)
+        order = mongo.db.orders.find_one({"id": order_id})
+        
+        if not order:
+            return jsonify({"error": "Order not found"}), 404
+
+        # Only allow deleting orders that are still Paid or Preparing (optional logic)
+        if order.get("status") == "Served":
+            return jsonify({"error": "Cannot delete an order that has already been served."}), 400
+
+        # Refund User Wallet
+        user_id = order.get('user_id')
+        total_amount = float(order.get('total', 0))
+        
+        from pymongo import ReturnDocument
+        updated_user = mongo.db.users.find_one_and_update(
+            {"_id": ObjectId(user_id)},
+            {"$inc": {"walletBalance": total_amount}},
+            return_document=ReturnDocument.AFTER
+        )
+        new_balance = updated_user.get('walletBalance', 0) if updated_user else 0
+
+        # Restock the items
+        items = order.get('items', [])
+        bulk_ops = []
+        for item in items:
+            bulk_ops.append(
+                UpdateOne(
+                    {"_id": ObjectId(item['id'])}, 
+                    {"$inc": {"quantity": item['qty']}}
+                )
+            )
+        
+        if bulk_ops:
+            mongo.db.stock.bulk_write(bulk_ops)
+
+        # Delete the order document
+        mongo.db.orders.delete_one({"id": order_id})
+
+        return jsonify({
+            "message": f"Order {order_id} deleted successfully. Refunded ₹{total_amount}.",
+            "new_balance": new_balance
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
