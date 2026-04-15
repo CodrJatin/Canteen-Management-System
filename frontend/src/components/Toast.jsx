@@ -6,7 +6,7 @@ const Toast = ({ message, type = 'success', onClose, duration = 3000 }) => {
     const handleInternalClose = () => {
         setIsVisible(false);
         if (onClose) {
-            onClose(); // Call the parent function if it exists
+            onClose();
         }
     };
 
@@ -25,7 +25,7 @@ const Toast = ({ message, type = 'success', onClose, duration = 3000 }) => {
                     ? 'bg-green-500/10 border-green-500/20 shadow-green-500/10'
                     : 'bg-orange-500/10 border-orange-500/20 shadow-orange-500/10'}
       `}>
-                {/* Animated Glow Backdrop */}
+
                 <div className={`absolute inset-0 blur-xl opacity-20 rounded-3xl ${isSuccess ? 'bg-green-500' : 'bg-orange-500'}`}></div>
 
                 <div className={`p-2 rounded-xl ${isSuccess ? 'bg-green-500/20 text-green-500' : 'bg-orange-500/20 text-orange-500'}`}>

@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext } from 'react';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    
+
     const [user, setUser] = useState(() => {
         const savedUser = localStorage.getItem('canteen_user');
 
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     ;
 
     const login = (userData) => {
-        // Only save if userData is valid to prevent "undefined" from leaking in
+
         if (userData) {
             setUser(userData);
             localStorage.setItem('canteen_user', JSON.stringify(userData));

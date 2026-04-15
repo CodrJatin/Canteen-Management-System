@@ -11,7 +11,7 @@ export default function OrdersView({ orders }) {
 
     return (
         <div className="space-y-8">
-            {/* --- SUB-NAVBAR (GLASS PILL) --- */}
+
             <div className="flex gap-2 p-1.5 bg-white/5 backdrop-blur-md rounded-2xl w-fit border border-white/10">
                 <TabButton
                     active={orderTab === 'live'}
@@ -27,12 +27,10 @@ export default function OrdersView({ orders }) {
                 />
             </div>
 
-            {/* --- ORDERS GRID --- */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-in fade-in duration-500">
                 {displayOrders.map(order => (
                     <div key={order.id} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[40px] p-7 shadow-2xl group hover:border-orange-500/30 transition-all duration-300 relative overflow-hidden">
 
-                        {/* Header Section */}
                         <div className="flex justify-between items-start mb-6 relative z-10">
                             <div className="flex flex-col gap-1.5">
                                 <div className="flex items-center gap-2">
@@ -53,7 +51,6 @@ export default function OrdersView({ orders }) {
                             <StatusBadge status={order.status} />
                         </div>
 
-                        {/* Items List (Glass Inset) */}
                         <div className="space-y-3 mb-6 bg-black/20 p-5 rounded-3xl border border-white/5 relative z-10">
                             {order.items.map((item, idx) => (
                                 <div key={idx} className="flex justify-between items-center text-[11px] font-black uppercase tracking-tight">
@@ -65,13 +62,11 @@ export default function OrdersView({ orders }) {
                             ))}
                         </div>
 
-                        {/* Billing Info */}
                         <div className="flex justify-between items-end mb-4 relative z-10 px-1">
                             <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Final Bill</p>
                             <p className="text-3xl font-black text-white tracking-tighter italic">₹{order.total}</p>
                         </div>
 
-                        {/* Timeline Toggle */}
                         <TimelineSection
                             timestamps={{
                                 paid: order.timePaid,

@@ -19,7 +19,7 @@ def get_stock():
 def add_item():
     try:
         new_item = request.json
-        # Ensure 'stock' and 'price' are numbers
+        
         new_item['quantity'] = int(new_item.get('quantity', 0))
         new_item['price'] = float(new_item.get('price', 0))
         
@@ -31,10 +31,10 @@ def add_item():
 
 
 @stock_bp.route('/stock/<item_id>', methods=['PUT'])
-def update_stock_item(item_id): # Renamed to be unique
+def update_stock_item(item_id): 
     try:
         data = request.json
-        # Convert numeric strings to actual numbers
+        
         if 'price' in data: data['price'] = float(data['price'])
         if 'quantity' in data: data['quantity'] = int(data['quantity'])
 

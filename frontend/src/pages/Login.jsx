@@ -32,7 +32,6 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Basic Validation for Registration
         if (mode === 'register' && formData.password !== formData.confirmPassword) {
             return showToast("Passwords do not match", "error");
         }
@@ -54,17 +53,17 @@ export default function Login() {
 
             if (response.ok) {
                 if (mode === 'login') {
-                    showToast("Access Granted. Welcome!"); // Success Toast
+                    showToast("Access Granted. Welcome!");
                     setTimeout(() => {
                         login(data.user);
                         navigate(`/${data.user.role}`);
-                    }, 1500); // Small delay so they can actually see the toast
+                    }, 1500);
                 } else {
                     showToast("Account Created! Sign in now.");
                     setMode('login');
                 }
             } else {
-                // REPLACE alert WITH showToast
+
                 showToast(data.error || "Authentication Failed", "error");
             }
         } catch (err) {
@@ -75,7 +74,7 @@ export default function Login() {
 
     return (
         <div className="min-h-screen w-full bg-[#0f172a] flex items-center justify-center p-6 selection:bg-orange-500/30 font-sans relative overflow-hidden">
-            {/* --- Toast --- */}
+
             {toast.show && (
                 <Toast
                     message={toast.message}
@@ -83,12 +82,12 @@ export default function Login() {
                     onClose={() => setToast({ ...toast, show: false })}
                 />
             )}
-            {/* --- ORANGE DECORATIVE BLOBS --- */}
+
             <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-orange-600/15 rounded-full blur-[130px] pointer-events-none" />
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-600/10 rounded-full blur-[160px] pointer-events-none" />
 
             <div className="w-full max-w-115 relative z-10 animate-in fade-in zoom-in-95 duration-500">
-                {/* --- FLOATING ORANGE ROLE BAR --- */}
+
                 {mode == "register" && (
                     <div className="flex justify-center mb-10">
                         <div className="gap-2 inline-flex p-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-3xl">
@@ -108,11 +107,9 @@ export default function Login() {
                         </div>
                     </div>)}
 
-
-                {/* --- MAIN CONTENT CARD (GLASSMORHISM) --- */}
                 <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[45px] p-10 md:p-14 shadow-[0_32px_64px_-15px_rgba(0,0,0,0.6)]">
                     <header className="mb-12 text-center">
-                        {/* Orange Period Accent */}
+
                         <h1 className="text-5xl font-black text-white tracking-tighter italic">
                             CANTEEN<span className="text-orange-500 text-6xl">.</span>
                         </h1>
@@ -167,7 +164,6 @@ export default function Login() {
                             </div>
                         )}
 
-                        {/* --- ORANGE ACTION BUTTON --- */}
                         <button
                             type="submit"
                             className="w-full bg-orange-600 hover:bg-orange-500 text-white font-black py-5 rounded-3xl shadow-3xl shadow-orange-600/25 transition-all transform active:scale-[0.96] flex items-center justify-center gap-3 mt-10 group"

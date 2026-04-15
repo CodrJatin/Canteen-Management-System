@@ -10,7 +10,6 @@ export default function EditableRow({ item, onSave, onDeleteReq, mobile }) {
         setIsEditing(false);
     };
 
-    // --- MOBILE EDITING VIEW (GLASS) ---
     if (isEditing && mobile) {
         return (
             <div className="bg-white/5 backdrop-blur-md p-4 rounded-3xl border border-white/10 space-y-4 w-full animate-in fade-in slide-in-from-top-2">
@@ -58,7 +57,6 @@ export default function EditableRow({ item, onSave, onDeleteReq, mobile }) {
         );
     }
 
-    // --- MOBILE VIEW ---
     if (mobile) {
         return (
             <div className="border-b border-white/5 pb-5 mb-5 last:border-0">
@@ -88,7 +86,6 @@ export default function EditableRow({ item, onSave, onDeleteReq, mobile }) {
         );
     }
 
-    // --- DESKTOP EDITING VIEW ---
     if (isEditing) {
         return (
             <tr className="bg-orange-600/5 border-y border-orange-500/20 animate-in fade-in duration-300">
@@ -114,12 +111,10 @@ export default function EditableRow({ item, onSave, onDeleteReq, mobile }) {
         );
     }
 
-    // --- DESKTOP VIEW ---
     return (
         <tr className="border-b border-white/5 last:border-0 hover:bg-white/2 transition-colors group">
             <td className="py-6 px-4 font-black text-white text-lg italic tracking-tight uppercase">{item.name}</td>
 
-            {/* --- CATEGORY CELL --- */}
             <td className="py-6 px-4">
                 <span className="flex items-center gap-2 text-[10px] font-black text-orange-500 uppercase tracking-[0.2em] bg-orange-500/5 border border-orange-500/10 px-3 py-1.5 rounded-xl w-fit">
                     <Tag size={10} strokeWidth={3} />

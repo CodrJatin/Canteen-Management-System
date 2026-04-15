@@ -21,7 +21,7 @@ export default function ChefDashboard() {
 
     useEffect(() => {
         fetchOrders();
-        // Auto-refresh every 30 seconds to catch new scans
+
         const interval = setInterval(fetchOrders, 10000);
         return () => clearInterval(interval);
     }, []);
@@ -32,7 +32,7 @@ export default function ChefDashboard() {
                 method: 'PATCH'
             });
             if (response.ok) {
-                // Remove the order from the local list immediately
+
                 setOrders(prev => prev.filter(order => order.id !== orderId));
             }
         } catch (error) {
@@ -42,7 +42,7 @@ export default function ChefDashboard() {
 
     return (
         <div className="min-h-screen bg-[#020617] text-white font-sans">
-            {/* Header */}
+
             <header className="fixed top-0 left-0 right-0 bg-black/40 backdrop-blur-xl border-b border-white/5 p-6 flex justify-between items-center z-50">
                 <div className="flex items-center gap-3">
                     <UtensilsCrossed className="text-orange-500" size={28} />
@@ -95,7 +95,6 @@ export default function ChefDashboard() {
                                     </button>
                                 </div>
 
-                                {/* Items List */}
                                 <div className="bg-black/20 rounded-2xl p-4 space-y-3">
                                     {order.items.map((item, idx) => (
                                         <div key={idx} className="flex justify-between items-center">

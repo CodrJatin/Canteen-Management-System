@@ -7,28 +7,26 @@ export default function CheckoutModal({ isOpen, onClose, orderId, totalAmount })
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(orderId);
-        // You can trigger your Toast here!
+
     };
 
     return (
         <div className="fixed inset-0 z-120 flex items-center justify-center p-4">
-            {/* Backdrop with Heavy Blur */}
+
             <div
                 className="absolute inset-0 bg-[#0f172a]/90 backdrop-blur-md"
                 onClick={onClose}
             />
 
-            {/* Modal Container */}
             <div className="relative w-full max-w-sm bg-[#1e293b] rounded-[40px] border border-white/10 overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-300">
 
-                {/* --- TOP STATUS BAR --- */}
                 <div className="p-4 mt-6 flex items-center justify-center gap-2">
                     <CheckCircle2 size={16} className="text-white" />
                     <span className="font-black uppercase text-xs tracking-[0.2em] text-white">Order Confirmed</span>
                 </div>
 
                 <div className="p-8 flex flex-col items-center text-center">
-                    {/* --- QR CODE SECTION --- */}
+
                     <div className="p-6 bg-white rounded-4xl shadow-[0_20px_40px_rgba(0,0,0,0.3)] mb-6 transition-transform hover:scale-105 duration-500">
                         <QRCode
                             value={orderId || "N/A"}
@@ -39,7 +37,6 @@ export default function CheckoutModal({ isOpen, onClose, orderId, totalAmount })
                         />
                     </div>
 
-                    {/* --- ORDER INFO --- */}
                     <div className="space-y-1 mb-8">
                         <h3 className="text-gray-500 font-black uppercase text-[10px] tracking-widest">Digital Token</h3>
                         <div className="flex items-center gap-2 justify-center group">
@@ -50,7 +47,6 @@ export default function CheckoutModal({ isOpen, onClose, orderId, totalAmount })
                         </div>
                     </div>
 
-                    {/* --- TOTAL PILL --- */}
                     <div className="w-full bg-white/5 border border-white/5 rounded-3xl p-6 mb-8 flex justify-between items-center">
                         <div className="text-left">
                             <span className="block text-[8px] font-black text-gray-500 uppercase tracking-widest">Amount Paid</span>
@@ -61,7 +57,6 @@ export default function CheckoutModal({ isOpen, onClose, orderId, totalAmount })
                         </div>
                     </div>
 
-                    {/* --- FOOTER ACTIONS --- */}
                     <p className="text-shadow-xs text-gray-500 font-medium mb-8 leading-relaxed px-4">
                         Show this QR code at the <span className="text-white font-bold italic">Scanner</span> to initiate your order.
                     </p>

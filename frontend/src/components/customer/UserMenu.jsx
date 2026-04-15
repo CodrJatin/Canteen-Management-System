@@ -11,18 +11,16 @@ export default function UserMenu({ isOpen, onClose, userName, userRole, onNaviga
 
     return (
         <>
-            {/* Dark Dimmer Backdrop */}
+
             <div className="fixed inset-0 z-40 h-100vh bg-black/60 backdrop-blur-[2px]" onClick={onClose} />
 
-            {/* --- THE STACKED GLASS CONTAINER --- */}
             <div className="absolute right-0 mt-6 w-80 bg-[#1e293b] backdrop-blur-2xl border border-white/10 rounded-[40px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.7)] overflow-hidden z-50 animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-300 origin-top-right">
 
-                {/* --- USER IDENTITY SECTION --- */}
                 <div className="p-8 flex flex-col items-center text-center relative">
                     <button onClick={onClose} className="absolute right-8 top-8 p-2.5 bg-white/5 text-gray-400 rounded-full hover:bg-white/10 transition-all hover:rotate-90">
                         <X size={20} />
                     </button>
-                    {/* Inner Accent Glow */}
+
                     <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-[60px] -z-10" />
 
                     <div className="w-20 h-20 bg-[#0f172a]/80 rounded-[28px] flex items-center justify-center text-orange-500 shadow-2xl mb-4 border border-white/5 group">
@@ -38,7 +36,6 @@ export default function UserMenu({ isOpen, onClose, userName, userRole, onNaviga
                     </span>
                 </div>
 
-                {/* --- ACTIONS SECTION --- */}
                 <div className="p-4 bg-black/20 border-t border-white/5 space-y-2">
                     <button
                         onClick={() => { isMyOrders(true); onClose(); }}

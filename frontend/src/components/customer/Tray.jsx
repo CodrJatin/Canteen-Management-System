@@ -23,7 +23,6 @@ export default function UnifiedTray({ cartEntries, clearCart, menu, updateCart, 
 
                                 <span className="font-black text-xs min-w-5 text-center text-orange-500">{qty}</span>
 
-                                {/* REMOVED parseInt here */}
                                 <button onClick={() => updateCart(id, 1)} className="p-1 text-gray-400 hover:text-orange-500 transition-colors">
                                     <Plus size={14} strokeWidth={3} />
                                 </button>
@@ -51,7 +50,7 @@ export default function UnifiedTray({ cartEntries, clearCart, menu, updateCart, 
                         {isMobile ? "Order Review" : "The Tray"}
                     </h2>
                 </div>
-                {/* --- REPLACED COUNTER WITH CLEAR BUTTON --- */}
+
                 {cartCount > 0 && (
                     <button
                         onClick={() => clearCart()}
@@ -77,11 +76,11 @@ export default function UnifiedTray({ cartEntries, clearCart, menu, updateCart, 
                 </div>
 
                 <button
-                    // Disable if cart is empty OR if we are currently processing an order
+
                     disabled={cartCount === 0 || isProcessing}
                     onClick={onCheckout}
                     className={`
-        w-full py-5 rounded-[25px] font-black text-sm uppercase tracking-widest transition-all 
+        w-full py-5 rounded-[25px] font-black text-sm uppercase tracking-widest transition-all
         flex items-center justify-center gap-3 group active:scale-95 shadow-2xl
         ${isProcessing
                             ? 'bg-orange-900/50 text-orange-500/50 cursor-not-allowed'

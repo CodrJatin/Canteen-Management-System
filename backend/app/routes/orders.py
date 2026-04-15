@@ -9,11 +9,11 @@ orders_bp = Blueprint('orders', __name__)
 @orders_bp.route('/orders', methods=['GET'])
 def get_orders():
     try:
-        # Fetch all orders, sorted by newest first
+        
         all_orders = list(mongo.db.orders.find().sort("date", -1).sort("timePaid", -1))
         
         for order in all_orders:
-            order['_id'] = str(order['_id']) # Convert ObjectId to string
+            order['_id'] = str(order['_id']) 
             
         return jsonify(all_orders), 200
     except Exception as e:
@@ -29,12 +29,12 @@ def place_order():
         items = data.get('items') 
         total_amount = float(data.get('total_amount', 0))
 
-        # 1. Fetch User & Check Balance
+        
         user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
         if not user or user.get('walletBalance', 0) < total_amount:
             return jsonify({"error": "Insufficient wallet balance"}), 400
 
-        # --- THE STOCK DEDUCTION (BULK APPROACH) ---
+        
         bulk_ops = []
         for item in items:
             bulk_ops.append(
@@ -45,25 +45,25 @@ def place_order():
             )
         
         if bulk_ops:
-            # Executes all deductions in one database trip
+            
             mongo.db.stock.bulk_write(bulk_ops)
 
-        # 2. Deduct Balance
+        
         mongo.db.users.update_one(
             {"_id": ObjectId(user_id)},
             {"$inc": {"walletBalance": -total_amount}}
         )
 
-        # 3. Generate Custom Data for your JSON structure
-        # 1. Define IST and get the current time OBJECT
+        
+        
         IST = timezone(timedelta(hours=5, minutes=30))
         now_obj = datetime.now(IST) 
         
-        # 2. Generate the ID
+        
         raw_id = str(ObjectId())
         custom_id = f"ORD-{raw_id[-6:].upper()}" 
 
-        # 3. Create Order Object
+        
         new_order = {
             "id": custom_id,                          
             "user_id": user_id,                       
@@ -77,13 +77,13 @@ def place_order():
             "items": items                             
         }
 
-        # 5. Save to Database
-        # Note: MongoDB will still add an internal "_id" ($oid) automatically
+        
+        
         mongo.db.orders.insert_one(new_order)
 
         return jsonify({
             "message": "Order placed successfully",
-            "order_id": new_order["id"],              # Returning the ORD-XXXX ID
+            "order_id": new_order["id"],              
             "new_balance": user.get('walletBalance', 0) - total_amount,
             "total": total_amount
         }), 201
@@ -97,7 +97,7 @@ def place_order():
 def update_order_status(order_id):
 
     try:
-        # We search for the custom order_id (e.g., ORD-XXXXXX)
+        
         order = mongo.db.orders.find_one({"id": order_id})
         
         if not order:
@@ -125,12 +125,12 @@ def update_order_status(order_id):
         return jsonify({"error": str(e)}), 500
     
 
-# orders.py
+
 
 @orders_bp.route('/orders/chef', methods=['GET'])
 def get_chef_orders():
     try:
-        # Fetch only orders that are currently being prepared
+        
         chef_orders = list(mongo.db.orders.find({"status": "Preparing"}).sort("timePreparing", 1))
         
         for order in chef_orders:
@@ -175,17 +175,17 @@ def get_user_orders(user_id):
 @orders_bp.route('/orders/<order_id>', methods=['DELETE'])
 def delete_order(order_id):
     try:
-        # We search for the custom order_id (e.g., ORD-XXXXXX)
+        
         order = mongo.db.orders.find_one({"id": order_id})
         
         if not order:
             return jsonify({"error": "Order not found"}), 404
 
-        # Only allow deleting orders that are still Paid or Preparing (optional logic)
+        
         if order.get("status") == "Served":
             return jsonify({"error": "Cannot delete an order that has already been served."}), 400
 
-        # Refund User Wallet
+        
         user_id = order.get('user_id')
         total_amount = float(order.get('total', 0))
         
@@ -197,7 +197,7 @@ def delete_order(order_id):
         )
         new_balance = updated_user.get('walletBalance', 0) if updated_user else 0
 
-        # Restock the items
+        
         items = order.get('items', [])
         bulk_ops = []
         for item in items:
@@ -211,7 +211,7 @@ def delete_order(order_id):
         if bulk_ops:
             mongo.db.stock.bulk_write(bulk_ops)
 
-        # Delete the order document
+        
         mongo.db.orders.delete_one({"id": order_id})
 
         return jsonify({

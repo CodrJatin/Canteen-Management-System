@@ -48,7 +48,7 @@ export default function WalletModal({ isOpen, onClose, currentBalance }) {
                     setAmount("");
                     setIsProcessing(false);
                     onClose();
-                }, 1500); // Increased slightly so user can read the success toast
+                }, 1500);
             } else {
                 console.error("Server Error:", data.error);
                 setIsProcessing(false);
@@ -63,7 +63,7 @@ export default function WalletModal({ isOpen, onClose, currentBalance }) {
 
     return (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
-            {/* --- Toast Container --- */}
+
             {toast.show && (
                 <div className="absolute top-10 left-1/2 -translate-x-1/2 z-110 w-full max-w-xs">
                     <Toast
@@ -74,13 +74,10 @@ export default function WalletModal({ isOpen, onClose, currentBalance }) {
                 </div>
             )}
 
-            {/* Backdrop Blur */}
             <div className="absolute inset-0 bg-[#0f172a]/80 backdrop-blur-sm" onClick={onClose} />
 
-            {/* Modal Container */}
             <div className="relative w-full max-w-md bg-[#1e293b] rounded-[45px] border border-white/10 overflow-hidden shadow-[0_0_100px_rgba(234,88,12,0.15)] animate-in zoom-in-95 duration-300">
 
-                {/* --- HEADER --- */}
                 <div className="p-8 pb-0 flex justify-between items-start">
                     <div>
                         <h2 className="text-2xl font-black italic tracking-tighter text-white uppercase">
@@ -97,13 +94,12 @@ export default function WalletModal({ isOpen, onClose, currentBalance }) {
                 </div>
 
                 <div className="p-8 space-y-8">
-                    {/* --- CURRENT BALANCE PILL --- */}
+
                     <div className="bg-linear-to-r from-orange-600/20 to-transparent border-l-4 border-orange-600 p-6 rounded-3xl">
                         <span className="text-[9px] font-black text-orange-500 uppercase tracking-[0.3em] block mb-1">Live Balance</span>
                         <span className="text-4xl font-black text-white italic tracking-tighter">₹{currentBalance}</span>
                     </div>
 
-                    {/* --- INPUT SECTION --- */}
                     <div className="space-y-4">
                         <div className="relative group">
                             <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-orange-500 italic">₹</span>
@@ -116,7 +112,6 @@ export default function WalletModal({ isOpen, onClose, currentBalance }) {
                             />
                         </div>
 
-                        {/* QUICK ADD BUTTONS */}
                         <div className="grid grid-cols-4 gap-2">
                             {quickAmounts.map(amt => (
                                 <button
@@ -130,7 +125,6 @@ export default function WalletModal({ isOpen, onClose, currentBalance }) {
                         </div>
                     </div>
 
-                    {/* --- CTA BUTTON --- */}
                     <button
                         onClick={handleRecharge}
                         disabled={isProcessing || !amount}

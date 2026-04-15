@@ -5,7 +5,7 @@ import EditableRow from ".././admin/EditableRow";
 export default function StockView({ stock, onUpdate, onDeleteReq, onOpenAddModal, onFetchManual }) {
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 font-sans">
-            {/* --- HEADER SECTION --- */}
+
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
                 <div>
                     <h2 className="text-2xl md:text-3xl font-black text-white tracking-tighter italic uppercase">
@@ -34,13 +34,12 @@ export default function StockView({ stock, onUpdate, onDeleteReq, onOpenAddModal
                 </div>
             </div>
 
-            {/* --- DESKTOP TABLE (DEEP GLASS) --- */}
             <div className="hidden md:block overflow-hidden">
                 <table className="w-full border-separate border-spacing-y-2">
                     <thead>
                         <tr>
                             <th className="pb-6 px-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] text-left">Item Identity</th>
-                            {/* --- NEW CATEGORY COLUMN --- */}
+
                             <th className="pb-6 px-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] text-left">Classification</th>
                             <th className="pb-6 px-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] text-left">Unit Price</th>
                             <th className="pb-6 px-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] text-left">Volume</th>
@@ -59,7 +58,7 @@ export default function StockView({ stock, onUpdate, onDeleteReq, onOpenAddModal
                             ))
                         ) : (
                             <tr>
-                                {/* --- UPDATED COLSPAN TO 5 --- */}
+
                                 <td colSpan="5" className="py-20 text-center">
                                     <div className="flex flex-col items-center gap-4 opacity-20 grayscale">
                                         <PackageSearch size={48} className="text-gray-400" />
@@ -74,7 +73,6 @@ export default function StockView({ stock, onUpdate, onDeleteReq, onOpenAddModal
                 </table>
             </div>
 
-            {/* --- MOBILE LIST --- */}
             <div className="md:hidden space-y-6">
                 {stock && stock.length > 0 ? (
                     stock.map(item => (

@@ -8,7 +8,7 @@ import Toast from '../../components/Toast';
 export default function MyOrdersModal({ isOpen, onClose, userId, onOrderDeleted }) {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
-    // 1. State to track which order's QR to show
+
     const [qrTarget, setQrTarget] = useState(null);
     const [orderToDelete, setOrderToDelete] = useState(null);
     const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
@@ -40,20 +40,20 @@ export default function MyOrdersModal({ isOpen, onClose, userId, onOrderDeleted 
     const confirmDeleteOrder = async () => {
         if (!orderToDelete) return;
         const orderId = orderToDelete;
-        setOrderToDelete(null); // Hide prompt
+        setOrderToDelete(null);
 
         try {
             setLoading(true);
             const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
                 method: 'DELETE',
             });
-            
+
             const data = await response.json();
 
             if (response.ok) {
-                // Update UI instantly
+
                 setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
-                // Update global user balance
+
                 if (user && login && data.new_balance !== undefined) {
                     login({ ...user, walletBalance: data.new_balance });
                 }
@@ -118,7 +118,6 @@ export default function MyOrdersModal({ isOpen, onClose, userId, onOrderDeleted 
                                     <div className="flex items-center gap-4">
                                         <p className="text-sm font-black text-white italic tracking-tight uppercase">{order.id}</p>
 
-                                        {/* 2. Updated QR Button Trigger */}
                                         <button
                                             onClick={() => setQrTarget(order)}
                                             className="p-2 bg-white/5 border border-white/10 rounded-xl text-gray-400 hover:text-orange-500 hover:bg-orange-500/10 hover:border-orange-500/50 transition-all active:scale-90 group"
@@ -171,7 +170,6 @@ export default function MyOrdersModal({ isOpen, onClose, userId, onOrderDeleted 
                 </div>
             </div>
 
-            {/* --- THE DELETE PROMPT MODAL --- */}
             {orderToDelete && (
                 <div className="fixed inset-0 z-120 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
                     <div className="bg-[#1e293b] w-full max-w-sm rounded-[35px] p-8 border border-white/10 shadow-2xl text-center relative animate-in zoom-in-95 duration-300">
@@ -200,11 +198,10 @@ export default function MyOrdersModal({ isOpen, onClose, userId, onOrderDeleted 
                 </div>
             )}
 
-            {/* --- 3. THE QR MODAL POPUP --- */}
             {qrTarget && (
                 <div className="fixed inset-0 z-110 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
                     <div className="bg-[#1e293b] w-full max-w-sm rounded-[45px] p-10 border border-white/10 shadow-2xl text-center relative animate-in zoom-in-95 duration-300">
-                        {/* Close Button */}
+
                         <button
                             onClick={() => setQrTarget(null)}
                             className="absolute right-6 top-6 p-2 text-gray-500 hover:text-white transition-colors"
@@ -217,7 +214,6 @@ export default function MyOrdersModal({ isOpen, onClose, userId, onOrderDeleted 
                             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mt-1">Scan at the counter</p>
                         </div>
 
-                        {/* Visual QR Container */}
                         <div className="bg-white p-6 rounded-[35px] inline-block shadow-2xl shadow-orange-500/10 mb-8">
                             <div className="w-48 h-48 bg-[#0f172a] rounded-2xl flex items-center justify-center relative overflow-hidden">
                                 <QRCode

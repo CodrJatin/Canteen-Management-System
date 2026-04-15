@@ -6,7 +6,6 @@ export default function FoodCard({ item, quantity, onUpdate }) {
     return (
         <div className={`bg-white/5 backdrop-blur-md p-5 rounded-[35px] border border-white/5 transition-all duration-300 group text-left relative overflow-hidden flex flex-col h-full ${isOutOfStock ? 'opacity-60 grayscale-[0.8]' : 'hover:border-orange-500/30'}`}>
 
-            {/* Subtle Gradient Glow */}
             {!isOutOfStock && (
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-orange-600/5 rounded-full blur-3xl group-hover:bg-orange-600/10 transition-colors" />
             )}
@@ -26,7 +25,7 @@ export default function FoodCard({ item, quantity, onUpdate }) {
                 <h3 className="text-lg font-black text-white uppercase tracking-tight mb-1 italic">
                     {item.name}
                 </h3>
-                {/* Visual indicator of remaining stock (optional) */}
+
                 {!isOutOfStock && item.quantity < 5 && (
                     <p className="text-[10px] text-orange-500 font-black uppercase italic">Only {item.quantity} left!</p>
                 )}

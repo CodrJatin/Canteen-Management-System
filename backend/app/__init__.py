@@ -8,7 +8,7 @@ from .routes.stock import stock_bp
 from .routes.auth import auth_bp
 from .routes.wallet import wallet_bp
 
-# Load the variables from .env into the system
+
 load_dotenv()
 
 def create_app():
@@ -18,17 +18,17 @@ def create_app():
     def home():
         return {"status": "Canteen API is Live"}, 200
 
-    # 1. Define origins
+    
     production_url = os.getenv("FRONTEND_URL") 
     origins_whitelist = [
         "http://localhost:5173", 
         "http://127.0.0.1:5173"
     ]
     if production_url:
-        # Ensure there's no trailing slash in the URL from env
+        
         origins_whitelist.append(production_url.rstrip('/'))
 
-    # 2. Initialize CORS (Supports Credentials & Patch)
+    
     CORS(app, resources={
         r"/api/*": {
             "origins": origins_whitelist,
@@ -38,11 +38,11 @@ def create_app():
         }
     })
 
-    # 4. Database Configuration
+    
     app.config["MONGO_URI"] = os.getenv("MONGO_URI")
     mongo.init_app(app)
 
-    # 5. Register Blueprints with Organized Prefixes
+    
     app.register_blueprint(stock_bp, url_prefix='/api')
     app.register_blueprint(orders_bp, url_prefix='/api')
     app.register_blueprint(auth_bp, url_prefix='/api')

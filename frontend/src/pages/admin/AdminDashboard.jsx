@@ -31,7 +31,6 @@ export default function AdminDashboard() {
         setToast({ visible: true, message, type });
     };
 
-    // --- UPDATED FETCH LOGIC (Using Dynamic API_BASE_URL) ---
     const handleFetchStock = async () => {
         try {
             const response = await fetch(`${API_BASE_URL}/stock`);
@@ -60,7 +59,7 @@ export default function AdminDashboard() {
     };
 
     useEffect(() => {
-        // Initial load for both
+
         fetchOrders();
         handleFetchStock();
 
@@ -147,7 +146,6 @@ export default function AdminDashboard() {
     return (
         <div className="min-h-screen bg-[#0f172a] flex flex-col font-sans text-white overflow-x-hidden relative text-left">
 
-            {/* --- CUSTOM TOAST SYSTEM --- */}
             {toast.visible && (
                 <Toast
                     message={toast.message}
@@ -156,11 +154,9 @@ export default function AdminDashboard() {
                 />
             )}
 
-            {/* --- THEME AMBIENCE --- */}
             <div className="absolute top-0 left-1/4 w-150 h-150 bg-orange-600/10 rounded-full blur-[140px] pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-125 h-125 bg-blue-600/5 rounded-full blur-[120px] pointer-events-none" />
 
-            {/* --- NAVBAR --- */}
             <nav className="bg-white/5 backdrop-blur-xl px-4 md:px-8 py-5 sticky top-0 z-40 border-b border-white/10 shadow-2xl">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <div className="flex flex-col">
@@ -188,7 +184,6 @@ export default function AdminDashboard() {
 
             <div className="p-4 md:p-10 max-w-7xl mx-auto w-full space-y-10 relative z-10">
 
-                {/* --- STATS SECTION --- */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <StatCard
                         label="Today's Revenue"
@@ -210,7 +205,6 @@ export default function AdminDashboard() {
                     />
                 </div>
 
-                {/* --- CONTENT TABS & VIEW --- */}
                 <div className="space-y-6">
                     <div className="flex gap-2 p-1.5 bg-white/5 backdrop-blur-md rounded-[22px] border border-white/10 w-full md:w-fit">
                         <TabButton active={activeTab === 'stock'} onClick={() => setActiveTab('stock')} icon={<Package size={18} />} label="Inventory" />
@@ -233,7 +227,6 @@ export default function AdminDashboard() {
                 </div>
             </div>
 
-            {/* --- MODALS --- */}
             {isAddModalOpen && <AddItemModal onClose={() => setIsAddModalOpen(false)} onAdd={handleAddItem} />}
 
             {deleteTarget && (

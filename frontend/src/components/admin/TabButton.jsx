@@ -3,8 +3,8 @@ export default function TabButton({ active, onClick, icon, label }) {
         <button
             onClick={onClick}
             className={`
-                flex items-center justify-center gap-2 
-                px-6 md:px-8 py-2.5 md:py-3 
+                flex items-center justify-center gap-2
+                px-6 md:px-8 py-2.5 md:py-3
                 rounded-xl font-black uppercase text-[10px] tracking-widest
                 cursor-pointer transition-all duration-300
                 flex-1 md:flex-none

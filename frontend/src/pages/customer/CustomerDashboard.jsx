@@ -38,7 +38,7 @@ export default function CustomerDashboard() {
             const data = await response.json();
 
             if (response.ok) {
-                // Map MongoDB _id to id so your existing logic doesn't break
+
                 const normalizedData = data.map(item => ({
                     ...item,
                     id: item._id,
@@ -59,13 +59,12 @@ export default function CustomerDashboard() {
     }, []);
 
     const updateCart = (id, delta) => {
-        // 1. Find the item in the menu to check its stock
+
         const menuItem = menu.find(m => String(m.id) === String(id));
         if (!menuItem) return;
 
         const currentInCart = cart[id] || 0;
 
-        // 2. STOCK CHECK: Prevent increasing if it exceeds DB quantity
         if (delta > 0 && currentInCart + 1 > menuItem.quantity) {
             showToast(`Only ${menuItem.quantity} units of ${menuItem.name} available!`, "error");
             return;
@@ -103,7 +102,6 @@ export default function CustomerDashboard() {
     const handleConfirmOrder = async () => {
         if (isProcessing || cartCount === 0) return;
 
-        // Safety check for balance before hitting network
         if ((user?.walletBalance || 0) < cartTotal) {
             showToast("Insufficient Balance!", "error");
             setIsWalletOpen(true);
@@ -112,7 +110,7 @@ export default function CustomerDashboard() {
 
         setIsProcessing(true);
         try {
-            // Map cart IDs to the format your backend expects
+
             const orderItems = Object.entries(cart).map(([id, qty]) => {
                 const item = menu.find(m => String(m.id) === String(id));
                 return { id: item.id, name: item.name, qty: qty, price: item.price };
@@ -131,17 +129,17 @@ export default function CustomerDashboard() {
             const data = await response.json();
 
             if (response.ok) {
-                // Update the header balance immediately
+
                 login({ ...user, walletBalance: data.new_balance });
 
                 setIsMobileTrayOpen(false);
                 setIsCheckoutOpen(true);
 
-                setCurrentOrder(data); // Save the ORD-XXXX ID
-                setCart({});           // Clear tray
+                setCurrentOrder(data);
+                setCart({});
 
                 await fetchMenu();
-                
+
             } else {
                 showToast(data.error || "Order failed", "error");
                 console.log(data.error)
@@ -156,7 +154,7 @@ export default function CustomerDashboard() {
 
     return (
         <div className="min-h-screen bg-[#0f172a] flex flex-col font-sans overflow-x-hidden relative text-white">
-            {/* Toast */}
+
             {toast.show && (
                 <Toast
                     message={toast.message}
@@ -164,30 +162,27 @@ export default function CustomerDashboard() {
                     onClose={() => setToast({ ...toast, show: false })}
                 />
             )}
-            {/* --- THEME DECORATION --- */}
+
             <div className="absolute top-0 right-0 w-125 h-125 bg-orange-600/10 rounded-full blur-[120px] pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-100 h-100 bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
 
-            {/* --- HEADER --- */}
             <header className="bg-white/5 backdrop-blur-xl border-b border-white/10 sticky top-0 z-40 px-4 md:px-8 py-5">
                 <div className="max-w-350 mx-auto flex justify-between items-center">
-                    {/* LOGO */}
+
                     <h1 className="text-3xl font-black italic tracking-tighter cursor-pointer select-none text-white">
                         CANTEEN<span className="text-orange-500">.</span>
                     </h1>
 
                     <div className="flex items-center gap-4">
-                        {/* --- CONDENSED WALLET (Hidden on small screens) --- */}
+
                         <div className="flex items-center gap-3 bg-white/5 border border-white/10 pl-4 pr-3 py-2 rounded-2xl hover:bg-white/10 transition-all group">
-                            {/* Wallet Icon */}
+
                             <Wallet size={18} className="text-orange-500 group-hover:scale-110 transition-transform" />
 
-                            {/* Amount */}
                             <span className="text-lg font-black text-white italic tracking-tighter">
                                 ₹{user?.walletBalance || "0.00"}
                             </span>
 
-                            {/* --- PLUS ICON (Same style as FoodCard) --- */}
                             <button
                                 onClick={() => setIsWalletOpen(true)}
                                 className="bg-white/5 border border-white/10 text-white hover:bg-orange-600 hover:border-orange-500 p-2 rounded-xl transition-all duration-300 shadow-lg active:scale-90"
@@ -196,7 +191,6 @@ export default function CustomerDashboard() {
                             </button>
                         </div>
 
-                        {/* USER MENU */}
                         <div className="relative">
                             <button
                                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -224,9 +218,9 @@ export default function CustomerDashboard() {
             </header>
 
             <main className="max-w-350 mx-auto w-full p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 grow relative z-10">
-                {/* MENU SECTION */}
+
                 <div className="lg:col-span-8 space-y-8">
-                    {/* Search and Categories */}
+
                     <div className="space-y-6">
                         <div className="relative w-full group">
                             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-orange-500 transition-colors" size={20} />
@@ -243,7 +237,6 @@ export default function CustomerDashboard() {
                         />
                     </div>
 
-                    {/* Food Grid */}
                     {loading ? (
                         <div className="flex flex-col items-center justify-center h-64 w-full gap-4">
                             <Loader2 className="animate-spin text-orange-500" size={40} />
@@ -263,7 +256,6 @@ export default function CustomerDashboard() {
                     )}
                 </div>
 
-                {/* --- TRAY CONTAINER --- */}
                 <aside className={`${isMobileTrayOpen ? 'fixed inset-0 z-100 flex flex-col justify-end bg-black/80 backdrop-blur-md' : 'hidden lg:block lg:col-span-4'}`}>
                     {isMobileTrayOpen && <div className="absolute inset-0 -z-10" onClick={() => setIsMobileTrayOpen(false)} />}
                     <div className={`
@@ -294,12 +286,10 @@ export default function CustomerDashboard() {
                 </aside>
             </main>
 
-            {/* MOBILE DUAL-ACTION FLOATING DOCK */}
             {!isMobileTrayOpen && (
                 <div className="fixed bottom-8 left-6 right-6 lg:hidden z-50 animate-in fade-in slide-in-from-bottom-8 duration-500">
                     <div className="flex gap-3 w-full">
 
-                        {/* 1. CART / MENU ACTION */}
                         <button
                             onClick={() => setIsMobileTrayOpen(true)}
                             className="flex-1 bg-[#1e293b]/90 backdrop-blur-xl text-white p-5 rounded-[30px] flex justify-between items-center shadow-[0_20px_50px_rgba(0,0,0,0.4)] active:scale-95 transition-all border border-white/5"
@@ -334,7 +324,6 @@ export default function CustomerDashboard() {
                             />
                         </button>
 
-                        {/* 2. ORDERS LINK ACTION */}
                         <button
                         onClick={()=>setIsOrdersOpen(true)}
                             className="aspect-square bg-[#1e293b]/90 backdrop-blur-xl text-gray-400 p-5 rounded-[30px] flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.4)] active:scale-95 transition-all border border-white/5 group hover:text-orange-500"

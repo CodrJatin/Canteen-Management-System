@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function StatCard({ label, value, icon, color }) {
-    // Glass-themed color mapping
+
     const colors = {
         orange: "bg-orange-500/10 text-orange-500 border-orange-500/20",
         white: "bg-white/10 text-white border-white/20",
@@ -12,10 +12,8 @@ export default function StatCard({ label, value, icon, color }) {
     return (
         <div className="bg-white/5 backdrop-blur-2xl p-6 md:p-8 rounded-[35px] md:rounded-[45px] border border-white/10 flex items-center gap-5 md:gap-7 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.3)] group hover:bg-white/8 transition-all duration-500 relative overflow-hidden">
 
-            {/* Subtle background glow that matches the card's theme */}
             <div className={`absolute -right-4 -bottom-4 w-24 h-24 rounded-full blur-3xl opacity-20 transition-opacity group-hover:opacity-40 ${color === 'orange' ? 'bg-orange-500' : color === 'red' ? 'bg-red-500' : 'bg-white'}`} />
 
-            {/* Icon Container with Glass Border */}
             <div className={`${colors[color] || colors.white} p-4 md:p-5 rounded-[22px] md:rounded-[28px] shrink-0 border shadow-inner flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3`}>
                 {icon}
             </div>

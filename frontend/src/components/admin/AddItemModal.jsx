@@ -7,19 +7,18 @@ export default function AddItemModal({ onClose, onAdd }) {
     const categories = ["Main Course", "Snacks", "Beverages", "Desserts"];
 
     const handleSubmit = () => {
-        // 2. Updated validation to include category
+
         if (!form.name || !form.price || !form.quantity || !form.category) {
             alert("Please fill in all fields including Category");
             return;
         }
         onAdd(form);
     };
-    
+
     return (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-in fade-in duration-300">
             <div className="bg-[#1e293b] w-full max-w-md rounded-[45px] p-8 md:p-12 shadow-[0_32px_64px_-15px_rgba(0,0,0,0.7)] border border-white/10 animate-in zoom-in-95 relative overflow-hidden text-left">
 
-                {/* Decorative Glow */}
                 <div className="absolute -top-20 -right-20 w-40 h-40 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
 
                 <button
@@ -42,7 +41,7 @@ export default function AddItemModal({ onClose, onAdd }) {
                 </header>
 
                 <div className="space-y-6">
-                    {/* --- NAME INPUT --- */}
+
                     <div>
                         <label className="text-[10px] font-black uppercase text-gray-500 ml-1 tracking-widest">Item Designation</label>
                         <input
@@ -53,7 +52,6 @@ export default function AddItemModal({ onClose, onAdd }) {
                         />
                     </div>
 
-                    {/* --- CATEGORY INPUT (NEW) --- */}
                     <div className="relative group">
                         <label className="text-[10px] font-black uppercase text-gray-500 ml-1 tracking-widest">Classification</label>
                         <div className="relative">
@@ -72,7 +70,7 @@ export default function AddItemModal({ onClose, onAdd }) {
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">
-                        {/* --- PRICE INPUT --- */}
+
                         <div>
                             <label className="text-[10px] font-black uppercase text-gray-500 ml-1 tracking-widest">Price (₹)</label>
                             <input
@@ -84,7 +82,6 @@ export default function AddItemModal({ onClose, onAdd }) {
                             />
                         </div>
 
-                        {/* --- QUANTITY INPUT --- */}
                         <div>
                             <label className="text-[10px] font-black uppercase text-gray-500 ml-1 tracking-widest">Initial Units</label>
                             <input
@@ -97,7 +94,6 @@ export default function AddItemModal({ onClose, onAdd }) {
                         </div>
                     </div>
 
-                    {/* --- ACTION BUTTONS --- */}
                     <div className="flex gap-4 pt-6">
                         <button
                             onClick={onClose}

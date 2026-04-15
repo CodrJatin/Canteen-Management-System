@@ -11,14 +11,14 @@ def register():
     password = data.get('password')
     role = data.get('role', 'customer')
 
-    # Check if user exists
+    
     if mongo.db.users.find_one({"username": username}):
         return jsonify({"error": "Username already taken"}), 400
 
-    # Secure the password
+    
     hashed_password = generate_password_hash(password)
     
-    # --- UPDATED: ADDED walletBalance: 0 ---
+    
     mongo.db.users.insert_one({
         "username": username,
         "password": hashed_password,
@@ -37,7 +37,7 @@ def login():
     user = mongo.db.users.find_one({"username": username})
 
     if user and check_password_hash(user['password'], password):
-        # Convert ObjectId to string if you need the ID on frontend
+        
         user_id = str(user['_id']) 
         
         return jsonify({
@@ -46,7 +46,7 @@ def login():
                 "id": user_id,
                 "username": user['username'],
                 "role": user['role'],
-                # .get(key, default) handles legacy users who don't have the field yet
+                
                 "walletBalance": user.get('walletBalance', 0)
             }
         }), 200

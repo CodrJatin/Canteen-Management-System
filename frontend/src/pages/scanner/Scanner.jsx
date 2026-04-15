@@ -10,25 +10,22 @@ export default function AdminScanner() {
     const [isScannerStarted, setIsScannerStarted] = useState(false);
     const [manualId, setManualId] = useState("");
 
-    // Camera States
     const [cameras, setCameras] = useState([]);
     const [selectedCameraId, setSelectedCameraId] = useState("");
 
     const scannerRef = useRef(null);
 
-    // 1. Fetch available cameras on component mount
     useEffect(() => {
         Html5Qrcode.getCameras().then(devices => {
             if (devices && devices.length) {
                 setCameras(devices);
-                // Default to the first camera found
+
                 setSelectedCameraId(devices[0].id);
             }
         }).catch(err => {
             console.error("Error fetching cameras:", err);
         });
 
-        // Cleanup: Stop scanner when user leaves the page
         return () => {
             if (scannerRef.current) {
                 scannerRef.current.stop().catch(() => { });
@@ -37,7 +34,7 @@ export default function AdminScanner() {
     }, []);
 
     const startScanner = async (cameraId = null) => {
-        // If a scanner is already running, stop it before switching
+
         if (scannerRef.current && isScannerStarted) {
             await scannerRef.current.stop();
         }
@@ -73,11 +70,10 @@ export default function AdminScanner() {
         setManualId("");
     };
 
-    // Handle dropdown change
     const handleCameraChange = (e) => {
         const newId = e.target.value;
         setSelectedCameraId(newId);
-        // If the camera is already live, restart it immediately with the new source
+
         if (isScannerStarted) {
             startScanner(newId);
         }
@@ -108,7 +104,6 @@ export default function AdminScanner() {
     return (
         <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center p-6 text-white font-sans relative">
 
-            {/* Header / Logout */}
             <div className="fixed top-0 left-0 right-0 p-6 flex justify-between items-center bg-black/40 backdrop-blur-xl border-b border-white/5 z-50">
                 <h1 className="font-black italic tracking-tighter text-xl">SCANNER<span className="text-orange-500">.</span></h1>
                 <button onClick={logout} className="p-2 bg-red-500/10 text-red-500 rounded-xl border border-red-500/20 active:scale-95 transition-transform">
@@ -118,7 +113,6 @@ export default function AdminScanner() {
 
             <div className="w-full max-w-sm space-y-6 z-10">
 
-                {/* --- CAMERA SELECTION DROPDOWN --- */}
                 {cameras.length > 1 && (
                     <div className="relative group animate-in fade-in slide-in-from-top-2">
                         <select
@@ -136,12 +130,10 @@ export default function AdminScanner() {
                     </div>
                 )}
 
-                {/* The Scanner Container */}
                 <div className={`relative aspect-square rounded-[50px] overflow-hidden border-2 transition-all duration-500 ${status === 'success' ? 'border-green-500 shadow-[0_0_40px_rgba(34,197,94,0.2)]' : 'border-white/10 bg-white/5'}`}>
 
                     <div id="reader" className="w-full h-full bg-black"></div>
 
-                    {/* Manual Start Button Overlay */}
                     {!isScannerStarted && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/60 backdrop-blur-md">
                             <button
@@ -154,7 +146,6 @@ export default function AdminScanner() {
                         </div>
                     )}
 
-                    {/* Success/Processing Overlays */}
                     {status === 'processing' && (
                         <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-50 backdrop-blur-sm">
                             <Loader2 className="animate-spin text-orange-500" size={40} />
@@ -173,13 +164,13 @@ export default function AdminScanner() {
 
                 <div className="text-center space-y-2 mt-4">
                     <p className="text-gray-500 font-black text-[9px] uppercase tracking-[0.4em] mb-4">Scan Student Order QR</p>
-                    
+
                     <div className="flex items-center justify-center gap-4 py-2">
                         <div className="h-px bg-white/10 flex-1"></div>
                         <span className="text-gray-500 text-[10px] font-bold uppercase tracking-widest px-2">OR ENTER MANUAL ID</span>
                         <div className="h-px bg-white/10 flex-1"></div>
                     </div>
-                    
+
                     <form onSubmit={handleManualSubmit} className="flex gap-2">
                         <div className="relative flex-1">
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-black italic text-sm">ORD-</span>
